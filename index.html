@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажер английских слов (60 слов)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 26px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .progress {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        button {
+            padding: 16px;
+            font-size: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #f7fafc;
+            border-color: #cbd5e0;
+        }
+
+        button.correct {
+            background-color: #48bb78 !important;
+            border-color: #38a169 !important;
+            color: white;
+        }
+
+        button.incorrect {
+            background-color: #f56565 !important;
+            border-color: #e53e3e !important;
+            color: white;
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #result-screen h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            font-size: 18px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-around;
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .stats .correct-text { color: #48bb78; font-weight: bold; font-size: 24px; display: block;}
+        .stats .incorrect-text { color: #f56565; font-weight: bold; font-size: 24px; display: block;}
+
+        #mistakes-container {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        #mistakes-list {
+            font-size: 15px;
+            color: #e53e3e;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-left: 20px;
+            background: #fff5f5;
+            padding: 15px 15px 15px 35px;
+            border-radius: 8px;
+        }
+
+        #mistakes-list li {
+            margin-bottom: 8px;
+        }
+
+        #mistakes-list span {
+            color: #333;
+            font-weight: bold;
+        }
+
+        #restart-btn {
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            width: 100%;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 18px;
+        }
+
+        #restart-btn:hover {
+            background-color: #3182ce;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <div class="progress" id="progress-text">Слово 1 из 60</div>
+        <h1 id="word-display">Word</h1>
+        <div class="options" id="options-container"></div>
+    </div>
+
+    <div id="result-screen" class="hidden">
+        <h2>Тест завершен!</h2>
+        <div class="stats">
+            <div>Правильно: <span id="score-correct" class="correct-text">0</span></div>
+            <div>Ошибок: <span id="score-incorrect" class="incorrect-text">0</span></div>
+        </div>
+        
+        <div id="mistakes-container" class="hidden">
+            <p><b>Слова для повторения:</b></p>
+            <ul id="mistakes-list"></ul>
+        </div>
+
+        <button id="restart-btn">Пройти тест заново</button>
+    </div>
+</div>
+
+<script>
+    // Массив со всеми 60 вопросами на основе ваших данных
+    const quizData = [
+        { word: "abandon", options: ["избегать", "покидать", "улучшать", "соединять"], answer: "покидать" },
+        { word: "abandoned", options: ["заброшенный", "взрослый", "точный", "альтернативный"], answer: "заброшенный" },
+        { word: "abnormal", options: ["нормальный", "редкий", "ненормальный", "аналогичный"], answer: "ненормальный" },
+        { word: "abstract (adj)", options: ["конкретный", "абстрактный", "соседний", "достаточный"], answer: "абстрактный" },
+        { word: "abstract (n)", options: ["вывод", "доказательство", "краткое резюме статьи", "глава"], answer: "краткое резюме статьи" },
+        { word: "abstract (v)", options: ["извлекать", "распределять", "достигать", "изменять"], answer: "извлекать" },
+        { word: "abstraction", options: ["достижение", "абстракция", "точность", "сопровождение"], answer: "абстракция" },
+        { word: "academic (adj)", options: ["практический", "академический", "заброшенный", "административный"], answer: "академический" },
+        { word: "academic (n)", options: ["учёный", "студент", "взрослый", "сторонник"], answer: "учёный" },
+        { word: "academy", options: ["администрация", "университетская дисциплина", "академия", "исследование"], answer: "академия" },
+        { word: "access (n)", options: ["влияние", "доступ", "изменение", "помощь"], answer: "доступ" },
+        { word: "access (v)", options: ["регулировать", "получать доступ", "накапливать", "сопровождать"], answer: "получать доступ" },
+        { word: "accessible", options: ["доступный", "альтернативный", "точный", "соседний"], answer: "доступный" },
+        { word: "accommodate", options: ["достигать", "размещать / учитывать", "покидать", "исправлять"], answer: "размещать / учитывать" },
+        { word: "accommodation", options: ["жильё", "точность", "достижение", "абстракция"], answer: "жильё" },
+        { word: "accompaniment", options: ["поправка", "распределение", "сопровождение", "двусмысленность"], answer: "сопровождение" },
+        { word: "accompany", options: ["сопровождать", "накапливать", "влиять", "изменять"], answer: "сопровождать" },
+        { word: "accumulate", options: ["распределять", "накапливать", "адаптировать", "признавать"], answer: "накапливать" },
+        { word: "accuracy", options: ["точность", "взрослость", "поддержка", "изменение"], answer: "точность" },
+        { word: "accurate", options: ["административный", "точный", "достаточный", "аналогичный"], answer: "точный" },
+        { word: "achieve", options: ["изменять", "достигать", "сопровождать", "распределять"], answer: "достигать" },
+        { word: "achievement", options: ["достижение", "поддержка", "доступ", "адаптация"], answer: "достижение" },
+        { word: "acknowledge", options: ["накапливать", "признавать", "размещать", "влиять"], answer: "признавать" },
+        { word: "acknowledgement", options: ["признание", "изменение", "альтернатива", "точность"], answer: "признание" },
+        { word: "acquire", options: ["исправлять", "приобретать", "чередовать", "помогать"], answer: "приобретать" },
+        { word: "acquisition", options: ["приобретение", "сопровождение", "регулирование", "поправка"], answer: "приобретение" },
+        { word: "adapt", options: ["адаптировать", "покидать", "соединять", "объединять"], answer: "адаптировать" },
+        { word: "adaptable", options: ["соседний", "гибкий / способный адаптироваться", "точный", "взрослый"], answer: "гибкий / способный адаптироваться" },
+        { word: "adaptation", options: ["абстракция", "адаптация", "распределение", "влияние"], answer: "адаптация" },
+        { word: "adequate", options: ["достаточный", "аналогичный", "двусмысленность", "административный"], answer: "достаточный" },
+        { word: "adjacent", options: ["соседний", "абстрактный", "достаточный", "альтернативный"], answer: "соседний" },
+        { word: "adjust", options: ["регулировать", "достигать", "изменять", "извлекать"], answer: "регулировать" },
+        { word: "adjustment", options: ["адаптация", "корректировка / регулировка", "накапливание", "признание"], answer: "корректировка / регулировка" },
+        { word: "administration", options: ["администрация", "академия", "влияние", "жильё"], answer: "администрация" },
+        { word: "administrative", options: ["административный", "абстрактный", "точный", "заброшенный"], answer: "административный" },
+        { word: "adult (n)", options: ["взрослый (человек)", "учёный", "точность", "достижение"], answer: "взрослый (человек)" },
+        { word: "adult (adj)", options: ["взрослый (состояние)", "достаточный", "аналогичный", "абстрактный"], answer: "взрослый (состояние)" },
+        { word: "advocacy", options: ["поддержка / защита", "влияние", "жильё", "адаптация"], answer: "поддержка / защита" },
+        { word: "advocate (v)", options: ["поддерживать / отстаивать", "изменять", "достигать", "извлекать"], answer: "поддерживать / отстаивать" },
+        { word: "advocate (n)", options: ["сторонник / защитник", "жильё", "административный", "альтернатива"], answer: "сторонник / защитник" },
+        { word: "affect", options: ["влиять", "адаптировать", "распределять", "достигать"], answer: "влиять" },
+        { word: "aggregate (n)", options: ["совокупность", "коррекция", "доступ", "жильё"], answer: "совокупность" },
+        { word: "aggregate (v)", options: ["объединять", "извлекать", "изменять", "поддерживать"], answer: "объединять" },
+        { word: "aggregate (adj)", options: ["совокупный", "достаточный", "абстрактный", "альтернативный"], answer: "совокупный" },
+        { word: "aid (v)", options: ["помогать", "изменять", "адаптировать", "распределять"], answer: "помогать" },
+        { word: "aid (n)", options: ["помощь", "жильё", "поддержка", "абстракция"], answer: "помощь" },
+        { word: "albeit", options: ["хотя", "достаточно", "аналогичный", "двусмысленный"], answer: "хотя" },
+        { word: "allocate", options: ["распределять", "накапливать", "достигать", "извлекать"], answer: "распределять" },
+        { word: "allocation", options: ["распределение", "достижение", "жильё", "адаптация"], answer: "распределение" },
+        { word: "alter", options: ["изменять", "адаптировать", "поддерживать", "извлекать"], answer: "изменять" },
+        { word: "alteration", options: ["изменение", "адаптация", "достижение", "жильё"], answer: "изменение" },
+        { word: "alternate (adj)", options: ["чередующийся", "абстрактный", "достаточный", "точный"], answer: "чередующийся" },
+        { word: "alternate (v)", options: ["чередовать", "накапливать", "влиять", "сопровождать"], answer: "чередовать" },
+        { word: "alternative (adj)", options: ["альтернативный", "доступный", "достаточный", "административный"], answer: "альтернативный" },
+        { word: "alternative (n)", options: ["альтернатива", "достижение", "адаптация", "жильё"], answer: "альтернатива" },
+        { word: "ambiguity", options: ["двусмысленность", "точность", "влияние", "коррекция"], answer: "двусмысленность" },
+        { word: "ambiguous", options: ["двусмысленный", "доступный", "административный", "абстрактный"], answer: "двусмысленный" },
+        { word: "amend", options: ["вносить поправки", "изменять", "распределять", "достигать"], answer: "вносить поправки" },
+        { word: "amendment", options: ["поправка", "адаптация", "жильё", "альтернатива"], answer: "поправка" },
+        { word: "analogous", options: ["аналогичный", "доступный", "достаточный", "административный"], answer: "аналогичный" }
+    ];
+
+    let currentWordIndex = 0;
+    let correctCount = 0;
+    let incorrectCount = 0;
+    let mistakes = [];
+
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultScreen = document.getElementById('result-screen');
+    const wordDisplay = document.getElementById('word-display');
+    const optionsContainer = document.getElementById('options-container');
+    const progressText = document.getElementById('progress-text');
+
+    // Функция для случайного перемешивания массива (чтобы ответы не были всегда на одном месте)
+    function shuffleArray(array) {
+        let shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+
+    function initTest() {
+        currentWordIndex = 0;
+        correctCount = 0;
+        incorrectCount = 0;
+        mistakes = [];
+        
+        quizScreen.classList.remove('hidden');
+        resultScreen.classList.add('hidden');
+        
+        loadWord();
+    }
+
+    function loadWord() {
+        if (currentWordIndex >= quizData.length) {
+            showResults();
+            return;
+        }
+
+        const currentData = quizData[currentWordIndex];
+        wordDisplay.textContent = currentData.word;
+        progressText.textContent = `Слово ${currentWordIndex + 1} из ${quizData.length}`;
+
+        // Перемешиваем варианты ответов перед выводом
+        const shuffledOptions = shuffleArray(currentData.options);
+
+        optionsContainer.innerHTML = '';
+        shuffledOptions.forEach(optionText => {
+            const button = document.createElement('button');
+            button.textContent = optionText;
+            button.onclick = () => checkAnswer(button, optionText, currentData);
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    function checkAnswer(buttonElement, selectedText, currentData) {
+        const allButtons = optionsContainer.querySelectorAll('button');
+        allButtons.forEach(btn => btn.disabled = true);
+
+        const isCorrect = selectedText === currentData.answer;
+
+        if (isCorrect) {
+            buttonElement.classList.add('correct');
+            correctCount++;
+        } else {
+            buttonElement.classList.add('incorrect');
+            incorrectCount++;
+            mistakes.push(`<span>${currentData.word}</span> — ${currentData.answer}`);
+            
+            // Подсвечиваем правильный ответ
+            allButtons.forEach(btn => {
+                if (btn.textContent === currentData.answer) {
+                    btn.classList.add('correct');
+                }
+            });
+        }
+
+        // Переход к следующему вопросу через 1 секунду
+        setTimeout(() => {
+            currentWordIndex++;
+            loadWord();
+        }, 1000);
+    }
+
+    function showResults() {
+        quizScreen.classList.add('hidden');
+        resultScreen.classList.remove('hidden');
+
+        document.getElementById('score-correct').textContent = correctCount;
+        document.getElementById('score-incorrect').textContent = incorrectCount;
+
+        const mistakesContainer = document.getElementById('mistakes-container');
+        const mistakesList = document.getElementById('mistakes-list');
+        
+        if (mistakes.length > 0) {
+            mistakesContainer.classList.remove('hidden');
+            mistakesList.innerHTML = mistakes.map(m => `<li>${m}</li>`).join('');
+        } else {
+            mistakesContainer.classList.add('hidden');
+        }
+    }
+
+    document.getElementById('restart-btn').addEventListener('click', initTest);
+
+    // Старт
+    initTest();
+</script>
+
+</body>
+</html>
