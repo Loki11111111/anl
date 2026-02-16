@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тренажер английских слов (60 слов)</title>
+    <title>Тренажер английских слов</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -24,12 +24,19 @@
             width: 100%;
             max-width: 450px;
             text-align: center;
+            position: relative; /* Добавлено для позиционирования элементов */
         }
 
         h1 {
             font-size: 26px;
             color: #2c3e50;
-            margin-bottom: 5px;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #2d3748;
+            margin-bottom: 20px;
         }
 
         .progress {
@@ -82,11 +89,6 @@
             display: none !important;
         }
 
-        #result-screen h2 {
-            color: #2d3748;
-            margin-bottom: 20px;
-        }
-
         .stats {
             font-size: 18px;
             margin-bottom: 25px;
@@ -116,16 +118,10 @@
             border-radius: 8px;
         }
 
-        #mistakes-list li {
-            margin-bottom: 8px;
-        }
+        #mistakes-list li { margin-bottom: 8px; }
+        #mistakes-list span { color: #333; font-weight: bold; }
 
-        #mistakes-list span {
-            color: #333;
-            font-weight: bold;
-        }
-
-        #restart-btn {
+        .btn-primary {
             background-color: #4299e1;
             color: white;
             border: none;
@@ -133,19 +129,60 @@
             font-weight: bold;
             font-size: 18px;
             padding: 18px;
+            margin-top: 10px;
         }
 
-        #restart-btn:hover {
-            background-color: #3182ce;
+        .btn-primary:hover { background-color: #3182ce; }
+        
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: #4a5568;
+            border: none;
+            width: 100%;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 14px;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover { background-color: #cbd5e0; }
+
+        /* Стили для новой кнопки "Назад" */
+        .back-top-btn {
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 0;
+            margin-bottom: 15px;
+            text-align: left;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .back-top-btn:hover:not(:disabled) {
+            color: #2c3e50;
+            background: none;
+            border: none;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="quiz-screen">
-        <div class="progress" id="progress-text">Слово 1 из 60</div>
-        <h1 id="word-display">Word</h1>
+    <div id="menu-screen">
+        <h1>Выберите уровень</h1>
+        <div class="options">
+            <button id="btn-test1">Тест 1 (Оригинальные 60 слов)</button>
+            <button id="btn-test2">Тест 2 (Новые 58 слов)</button>
+        </div>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <button id="back-from-quiz-btn" class="back-top-btn">⬅ Назад к тестам</button>
+        <div class="progress" id="progress-text">Слово 1 из X</div>
+        <h2 id="word-display">Word</h2>
         <div class="options" id="options-container"></div>
     </div>
 
@@ -161,13 +198,14 @@
             <ul id="mistakes-list"></ul>
         </div>
 
-        <button id="restart-btn">Пройти тест заново</button>
+        <button id="restart-btn" class="btn-primary">Пройти тест заново</button>
+        <button id="back-menu-btn" class="btn-secondary">Назад к тестам</button>
     </div>
 </div>
 
 <script>
-    // Массив со всеми 60 вопросами на основе ваших данных
-    const quizData = [
+    // --- ДАННЫЕ ДЛЯ ТЕСТА 1 ---
+    const quizData1 = [
         { word: "abandon", options: ["избегать", "покидать", "улучшать", "соединять"], answer: "покидать" },
         { word: "abandoned", options: ["заброшенный", "взрослый", "точный", "альтернативный"], answer: "заброшенный" },
         { word: "abnormal", options: ["нормальный", "редкий", "ненормальный", "аналогичный"], answer: "ненормальный" },
@@ -230,18 +268,84 @@
         { word: "analogous", options: ["аналогичный", "доступный", "достаточный", "административный"], answer: "аналогичный" }
     ];
 
+    // --- ДАННЫЕ ДЛЯ ТЕСТА 2 (новые слова) ---
+    const quizData2 = [
+        { word: "analogy", answer: "аналогия" },
+        { word: "analyse", answer: "анализировать" },
+        { word: "analysis", answer: "анализ" },
+        { word: "analyst", answer: "аналитик" },
+        { word: "analytical", answer: "аналитический" },
+        { word: "analyze", answer: "анализировать" },
+        { word: "annual", answer: "ежегодный" },
+        { word: "anticipate", answer: "предвидеть, ожидать" },
+        { word: "anticipation", answer: "ожидание, предвкушение" },
+        { word: "apparent", answer: "очевидный, явный" },
+        { word: "append", answer: "добавлять, присоединять" },
+        { word: "appendix", answer: "приложение, дополнение" },
+        { word: "appreciable", answer: "заметный, значительный" },
+        { word: "appreciate", answer: "ценить, оценивать" },
+        { word: "appreciation", answer: "признательность, оценка" },
+        { word: "approach (v)", answer: "приближаться; подходить к (решению)" },
+        { word: "approach (n)", answer: "подход, метод" },
+        { word: "appropriate", answer: "подходящий, соответствующий" },
+        { word: "approximate (adj)", answer: "приблизительный" },
+        { word: "approximate (v)", answer: "приблизительно оценивать" },
+        { word: "approximation", answer: "приближение, приблизительная оценка" },
+        { word: "arbitrary", answer: "произвольный" },
+        { word: "area", answer: "область, площадь" },
+        { word: "aspect", answer: "аспект, сторона" },
+        { word: "assemble", answer: "собирать, составлять" },
+        { word: "assembly", answer: "сборка; собрание" },
+        { word: "assess", answer: "оценивать" },
+        { word: "assessment", answer: "оценка" },
+        { word: "assign", answer: "назначать; поручать" },
+        { word: "assignment", answer: "задание; назначение" },
+        { word: "assist", answer: "помогать, содействовать" },
+        { word: "assistance", answer: "помощь, содействие" },
+        { word: "assume", answer: "предполагать; принимать (на себя)" },
+        { word: "assuming", answer: "если предположить, что" },
+        { word: "assumption", answer: "предположение" },
+        { word: "assurance", answer: "уверенность; гарантия" },
+        { word: "assure", answer: "уверять, гарантировать" },
+        { word: "attach", answer: "прикреплять; присоединять" },
+        { word: "attachment", answer: "вложение; прикрепление" },
+        { word: "attain", answer: "достигать" },
+        { word: "attainment", answer: "достижение" },
+        { word: "attitude", answer: "отношение, позиция" },
+        { word: "attributable", answer: "относимый к; обусловленный" },
+        { word: "attribute (v)", answer: "приписывать" },
+        { word: "attribute (n)", answer: "атрибут; характеристика" },
+        { word: "author (n)", answer: "автор" },
+        { word: "author (v)", answer: "создавать; писать; санкционировать" },
+        { word: "authoritative", answer: "авторитетный" },
+        { word: "authority", answer: "власть; авторитет; орган власти" },
+        { word: "authorship", answer: "авторство" },
+        { word: "automate", answer: "автоматизировать" },
+        { word: "automated", answer: "автоматизированный" },
+        { word: "automatic", answer: "автоматический" },
+        { word: "automatically", answer: "автоматически" },
+        { word: "automation", answer: "автоматизация" },
+        { word: "available", answer: "доступный; имеющийся в наличии" },
+        { word: "aware", answer: "осведомлённый; осознающий" },
+        { word: "awareness", answer: "осведомлённость; осознание" }
+    ];
+
+    let activeDataPool = [];
+    let shuffledQuizData = [];
     let currentWordIndex = 0;
     let correctCount = 0;
     let incorrectCount = 0;
     let mistakes = [];
+    let timeoutId = null; // Переменная для хранения таймера
 
+    const menuScreen = document.getElementById('menu-screen');
     const quizScreen = document.getElementById('quiz-screen');
     const resultScreen = document.getElementById('result-screen');
     const wordDisplay = document.getElementById('word-display');
     const optionsContainer = document.getElementById('options-container');
     const progressText = document.getElementById('progress-text');
 
-    // Функция для случайного перемешивания массива (чтобы ответы не были всегда на одном месте)
+    // Функция для перемешивания массива
     function shuffleArray(array) {
         let shuffled = [...array];
         for (let i = shuffled.length - 1; i > 0; i--) {
@@ -251,30 +355,57 @@
         return shuffled;
     }
 
-    function initTest() {
+    // Автоматическая генерация неправильных вариантов из текущего словаря
+    function getOptionsForWord(currentData, dataPool) {
+        if (currentData.options) return currentData.options;
+        
+        let optionsSet = new Set([currentData.answer]);
+        
+        while(optionsSet.size < 4) {
+            let randomWord = dataPool[Math.floor(Math.random() * dataPool.length)];
+            optionsSet.add(randomWord.answer);
+        }
+        return Array.from(optionsSet);
+    }
+
+    function showMenu() {
+        // Очищаем таймер, чтобы следующий вопрос не переключился случайно, если мы вышли в меню
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        menuScreen.classList.remove('hidden');
+        quizScreen.classList.add('hidden');
+        resultScreen.classList.add('hidden');
+    }
+
+    function startTest(dataArray) {
+        activeDataPool = dataArray;
         currentWordIndex = 0;
         correctCount = 0;
         incorrectCount = 0;
         mistakes = [];
         
-        quizScreen.classList.remove('hidden');
+        shuffledQuizData = shuffleArray(activeDataPool);
+        
+        menuScreen.classList.add('hidden');
         resultScreen.classList.add('hidden');
+        quizScreen.classList.remove('hidden');
         
         loadWord();
     }
 
     function loadWord() {
-        if (currentWordIndex >= quizData.length) {
+        if (currentWordIndex >= shuffledQuizData.length) {
             showResults();
             return;
         }
 
-        const currentData = quizData[currentWordIndex];
+        const currentData = shuffledQuizData[currentWordIndex];
         wordDisplay.textContent = currentData.word;
-        progressText.textContent = `Слово ${currentWordIndex + 1} из ${quizData.length}`;
+        progressText.textContent = `Слово ${currentWordIndex + 1} из ${shuffledQuizData.length}`;
 
-        // Перемешиваем варианты ответов перед выводом
-        const shuffledOptions = shuffleArray(currentData.options);
+        const rawOptions = getOptionsForWord(currentData, activeDataPool);
+        const shuffledOptions = shuffleArray(rawOptions);
 
         optionsContainer.innerHTML = '';
         shuffledOptions.forEach(optionText => {
@@ -299,7 +430,6 @@
             incorrectCount++;
             mistakes.push(`<span>${currentData.word}</span> — ${currentData.answer}`);
             
-            // Подсвечиваем правильный ответ
             allButtons.forEach(btn => {
                 if (btn.textContent === currentData.answer) {
                     btn.classList.add('correct');
@@ -307,8 +437,8 @@
             });
         }
 
-        // Переход к следующему вопросу через 1 секунду
-        setTimeout(() => {
+        // Сохраняем ID таймера, чтобы его можно было сбросить при нажатии "Назад"
+        timeoutId = setTimeout(() => {
             currentWordIndex++;
             loadWord();
         }, 1000);
@@ -332,10 +462,16 @@
         }
     }
 
-    document.getElementById('restart-btn').addEventListener('click', initTest);
+    // Слушатели кнопок
+    document.getElementById('btn-test1').addEventListener('click', () => startTest(quizData1));
+    document.getElementById('btn-test2').addEventListener('click', () => startTest(quizData2));
+    
+    // Две кнопки, ведущие в меню
+    document.getElementById('back-menu-btn').addEventListener('click', showMenu);
+    document.getElementById('back-from-quiz-btn').addEventListener('click', showMenu);
+    
+    document.getElementById('restart-btn').addEventListener('click', () => startTest(activeDataPool));
 
-    // Старт
-    initTest();
 </script>
 
 </body>
