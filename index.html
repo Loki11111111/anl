@@ -26,6 +26,7 @@
             min-height: 100vh;
             margin: 0;
             color: var(--text-main);
+            padding: 20px 0; /* Добавили отступ для скролла, если блоков станет много */
         }
 
         .container {
@@ -38,6 +39,8 @@
             text-align: center;
             position: relative;
             box-sizing: border-box;
+            max-height: 95vh;
+            overflow-y: auto; /* Добавили скролл внутри карточки, если экран маленький */
         }
 
         h1 {
@@ -153,7 +156,7 @@
             font-weight: 500;
         }
 
-        /* Режим письма (Напиши сам) */
+        /* Режим письма */
         #typing-container {
             display: flex;
             flex-direction: column;
@@ -188,13 +191,6 @@
             border-color: var(--danger);
             background-color: #fef2f2;
             color: #991b1b;
-        }
-
-        .typing-feedback {
-            font-size: 16px;
-            font-weight: bold;
-            color: var(--danger);
-            min-height: 24px;
         }
 
         .typing-actions {
@@ -285,6 +281,12 @@
             border: none;
             transform: none;
         }
+        
+        /* Стилизация скроллбара */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
     </style>
 </head>
 <body>
@@ -303,11 +305,20 @@
         </div>
 
         <div class="block-container">
-            <div class="block-title">Блок 2 (Новые 58 слов)</div>
+            <div class="block-title">Блок 2 (58 слов)</div>
             <div class="options">
                 <button id="btn-b2-std">🎯 Англ ➔ Рус (Выбор)</button>
                 <button id="btn-b2-rev">🔄 Рус ➔ Англ (Реверс)</button>
                 <button id="btn-b2-write">✍️ Письмо (Напиши сам)</button>
+            </div>
+        </div>
+
+        <div class="block-container">
+            <div class="block-title">Блок 3 (Новые 59 слов)</div>
+            <div class="options">
+                <button id="btn-b3-std">🎯 Англ ➔ Рус (Выбор)</button>
+                <button id="btn-b3-rev">🔄 Рус ➔ Англ (Реверс)</button>
+                <button id="btn-b3-write">✍️ Письмо (Напиши сам)</button>
             </div>
         </div>
     </div>
@@ -328,7 +339,6 @@
 
         <div id="typing-container" class="hidden">
             <input type="text" id="typing-input" autocomplete="off" placeholder="Введите слово на английском...">
-            <div id="typing-feedback" class="typing-feedback hidden">Правильно: answer</div>
             <div class="typing-actions">
                 <button id="btn-dont-know">Не знаю</button>
                 <button id="btn-check-typing" class="btn-primary">Проверить</button>
@@ -457,6 +467,69 @@
         { word: "aware", answer: "осведомлённый; осознающий" }, { word: "awareness", answer: "осведомлённость; осознание" }
     ];
 
+    // --- ДАННЫЕ ДЛЯ БЛОКА 3 (Новые 59 слов) ---
+    const quizData3 = [
+        { word: "behalf (n)", answer: "интерес, польза (on behalf of — от имени)" },
+        { word: "beneficial (adj)", answer: "полезный, благоприятный" },
+        { word: "beneficiary (n)", answer: "бенефициар, получатель выгоды" },
+        { word: "benefit (n)", answer: "польза, выгода" },
+        { word: "benefit (v)", answer: "приносить пользу" },
+        { word: "bias (n)", answer: "предвзятость, склонность" },
+        { word: "bias (v)", answer: "предвзято относиться" },
+        { word: "biased (adj)", answer: "предвзятый" },
+        { word: "bond (n)", answer: "связь; облигация" },
+        { word: "bond (v)", answer: "связывать, устанавливать связь" },
+        { word: "brevity (n)", answer: "краткость" },
+        { word: "brief (adj)", answer: "краткий" },
+        { word: "brief (n)", answer: "краткое изложение, сводка" },
+        { word: "brief (v)", answer: "инструктировать, давать краткую информацию" },
+        { word: "briefing (n)", answer: "инструктаж" },
+        { word: "briefly (adv)", answer: "кратко" },
+        { word: "bulk (n)", answer: "основная часть, объём, масса" },
+        { word: "bulky (adj)", answer: "громоздкий" },
+        { word: "capability (n)", answer: "способность, возможность" },
+        { word: "capable (adj)", answer: "способный" },
+        { word: "capacity (n)", answer: "вместимость; мощность; способность" },
+        { word: "category (n)", answer: "категория" },
+        { word: "cease (v)", answer: "прекращать" },
+        { word: "challenge (n)", answer: "вызов, трудность" },
+        { word: "challenge (v)", answer: "бросать вызов" },
+        { word: "challenging (adj)", answer: "сложный, трудный" },
+        { word: "channel (n)", answer: "канал" },
+        { word: "channel (v)", answer: "направлять" },
+        { word: "chapter (n)", answer: "глава" },
+        { word: "chart (n)", answer: "диаграмма, график" },
+        { word: "chart (v)", answer: "составлять диаграмму; планировать" },
+        { word: "chemical (n)", answer: "химическое вещество" },
+        { word: "chemical (adj)", answer: "химический" },
+        { word: "circumstance (n)", answer: "обстоятельство" },
+        { word: "citation (n)", answer: "цитирование; ссылка" },
+        { word: "cite (v)", answer: "цитировать" },
+        { word: "civil (adj)", answer: "гражданский" },
+        { word: "clarification (n)", answer: "разъяснение" },
+        { word: "clarify (v)", answer: "разъяснять" },
+        { word: "clarity (n)", answer: "ясность" },
+        { word: "classic (adj)", answer: "классический" },
+        { word: "classic (n)", answer: "классическое произведение" },
+        { word: "classical (adj)", answer: "классический (о стиле, музыке, традициях)" },
+        { word: "clause (n)", answer: "пункт; придаточное предложение" },
+        { word: "code (n)", answer: "код" },
+        { word: "code (v)", answer: "кодировать" },
+        { word: "coded (adj)", answer: "закодированный" },
+        { word: "coding (n)", answer: "программирование, кодирование" },
+        { word: "coherence (n)", answer: "связность, логичность" },
+        { word: "coherent (adj)", answer: "связный, последовательный" },
+        { word: "coincide (v)", answer: "совпадать" },
+        { word: "coincidence (n)", answer: "совпадение" },
+        { word: "coincident (adj)", answer: "совпадающий" },
+        { word: "coincidental (adj)", answer: "случайный, совпавший" },
+        { word: "collapse (v)", answer: "рушиться, разрушаться" },
+        { word: "collapse (n)", answer: "обрушение, крах" },
+        { word: "colleague (n)", answer: "коллега" },
+        { word: "commence (v)", answer: "начинать" },
+        { word: "commencement (n)", answer: "начало" }
+    ];
+
     let activeDataPool = [];
     let shuffledQuizData = [];
     let currentWordIndex = 0;
@@ -473,7 +546,6 @@
     const optionsContainer = document.getElementById('options-container');
     const typingContainer = document.getElementById('typing-container');
     const typingInput = document.getElementById('typing-input');
-    const typingFeedback = document.getElementById('typing-feedback');
     const progressText = document.getElementById('progress-text');
     const progressFill = document.getElementById('progress-fill');
 
@@ -486,7 +558,6 @@
         return shuffled;
     }
 
-    // Очищает слово от (v), (n), (adj) для режима письма
     function cleanWord(word) {
         return word.replace(/\s*\(.*?\)\s*/g, '').toLowerCase().trim();
     }
@@ -543,12 +614,10 @@
         updateProgress();
         const currentData = shuffledQuizData[currentWordIndex];
         
-        // Сброс UI
         optionsContainer.innerHTML = '';
         typingInput.value = '';
         typingInput.className = '';
         typingInput.disabled = false;
-        typingFeedback.classList.add('hidden');
         
         if (currentTestMode === 'standard' || currentTestMode === 'reverse') {
             optionsContainer.classList.remove('hidden');
@@ -568,17 +637,14 @@
             });
 
         } else if (currentTestMode === 'typing') {
-            // Режим письма (показываем русский, просим английский)
             optionsContainer.classList.add('hidden');
             typingContainer.classList.remove('hidden');
-            wordDisplay.textContent = currentData.answer; // Показываем русский перевод
+            wordDisplay.textContent = currentData.answer; 
             
-            // Автофокус для удобства
             setTimeout(() => typingInput.focus(), 100);
         }
     }
 
-    // Проверка для режимов с кнопками
     function checkAnswerStandard(buttonElement, selectedText, currentData, isReverse) {
         const allButtons = optionsContainer.querySelectorAll('button');
         allButtons.forEach(btn => btn.disabled = true);
@@ -593,15 +659,11 @@
             buttonElement.classList.add('incorrect');
             incorrectCount++;
             mistakes.push(`<span>${currentData.word}</span> — ${currentData.answer}`);
-            
-            allButtons.forEach(btn => {
-                if (btn.textContent === correctAnswer) btn.classList.add('correct');
-            });
         }
-        timeoutId = setTimeout(() => { currentWordIndex++; loadWord(); }, 1000);
+        
+        timeoutId = setTimeout(() => { currentWordIndex++; loadWord(); }, 700);
     }
 
-    // Проверка для режима Письма
     function handleTypingAnswer(isSkip = false) {
         if (typingInput.disabled) return;
         
@@ -612,27 +674,20 @@
         typingInput.disabled = true;
 
         if (!isSkip && userAnswer === correctAnswerClean) {
-            // Правильно
             typingInput.classList.add('correct-input');
             correctCount++;
-            timeoutId = setTimeout(() => { currentWordIndex++; loadWord(); }, 700);
         } else {
-            // Ошибка или "Не знаю"
             typingInput.classList.add('incorrect-input');
             incorrectCount++;
             mistakes.push(`<span>${currentData.word}</span> — ${currentData.answer}`);
-            
-            typingFeedback.textContent = `Правильно: ${currentData.word}`;
-            typingFeedback.classList.remove('hidden');
-            
-            timeoutId = setTimeout(() => { currentWordIndex++; loadWord(); }, 2000); // Даем больше времени посмотреть
         }
+        
+        timeoutId = setTimeout(() => { currentWordIndex++; loadWord(); }, 700);
     }
 
     document.getElementById('btn-check-typing').addEventListener('click', () => handleTypingAnswer(false));
     document.getElementById('btn-dont-know').addEventListener('click', () => handleTypingAnswer(true));
     
-    // Поддержка клавиши Enter для ввода
     typingInput.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             handleTypingAnswer(false);
@@ -658,15 +713,20 @@
         }
     }
 
-    // Слушатели кнопок для БЛОКА 1
+    // Блок 1
     document.getElementById('btn-b1-std').addEventListener('click', () => startTest(quizData1, 'standard'));
     document.getElementById('btn-b1-rev').addEventListener('click', () => startTest(quizData1, 'reverse'));
     document.getElementById('btn-b1-write').addEventListener('click', () => startTest(quizData1, 'typing'));
 
-    // Слушатели кнопок для БЛОКА 2
+    // Блок 2
     document.getElementById('btn-b2-std').addEventListener('click', () => startTest(quizData2, 'standard'));
     document.getElementById('btn-b2-rev').addEventListener('click', () => startTest(quizData2, 'reverse'));
     document.getElementById('btn-b2-write').addEventListener('click', () => startTest(quizData2, 'typing'));
+    
+    // Блок 3
+    document.getElementById('btn-b3-std').addEventListener('click', () => startTest(quizData3, 'standard'));
+    document.getElementById('btn-b3-rev').addEventListener('click', () => startTest(quizData3, 'reverse'));
+    document.getElementById('btn-b3-write').addEventListener('click', () => startTest(quizData3, 'typing'));
     
     // Навигация
     document.getElementById('back-menu-btn').addEventListener('click', showMenu);
