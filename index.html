@@ -5,166 +5,285 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тренажер английских слов</title>
     <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            color: #333;
+            color: var(--text-main);
         }
 
         .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            background-color: var(--card-bg);
+            padding: 35px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
             width: 100%;
             max-width: 450px;
             text-align: center;
-            position: relative; /* Добавлено для позиционирования элементов */
+            position: relative;
+            box-sizing: border-box;
         }
 
         h1 {
-            font-size: 26px;
-            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 700;
             margin-bottom: 25px;
+            color: var(--text-main);
         }
 
         h2 {
-            font-size: 22px;
-            color: #2d3748;
+            font-size: 26px;
+            margin-bottom: 25px;
+            color: var(--primary);
+        }
+
+        /* Дизайн меню */
+        .block-container {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 15px;
             margin-bottom: 20px;
         }
 
-        .progress {
-            color: #7f8c8d;
-            font-size: 14px;
-            margin-bottom: 25px;
-            font-weight: 500;
+        .block-title {
+            font-size: 15px;
+            color: var(--text-muted);
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .options {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
+        /* Общие кнопки */
         button {
-            padding: 16px;
+            padding: 14px 18px;
             font-size: 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            background-color: white;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background-color: var(--card-bg);
             cursor: pointer;
-            transition: all 0.2s ease;
-            color: #4a5568;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-main);
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #menu-screen button {
+            justify-content: flex-start;
         }
 
         button:hover:not(:disabled) {
-            background-color: #f7fafc;
-            border-color: #cbd5e0;
+            border-color: var(--primary);
+            background-color: #f5f3ff;
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(1px);
         }
 
         button.correct {
-            background-color: #48bb78 !important;
-            border-color: #38a169 !important;
-            color: white;
+            background-color: var(--success) !important;
+            border-color: var(--success) !important;
+            color: white !important;
         }
 
         button.incorrect {
-            background-color: #f56565 !important;
-            border-color: #e53e3e !important;
-            color: white;
+            background-color: var(--danger) !important;
+            border-color: var(--danger) !important;
+            color: white !important;
         }
 
         button:disabled {
             cursor: not-allowed;
+            opacity: 0.8;
         }
 
-        .hidden {
-            display: none !important;
-        }
-
-        .stats {
-            font-size: 18px;
+        /* Прогресс бар */
+        .progress-wrapper {
             margin-bottom: 25px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Режим письма (Напиши сам) */
+        #typing-container {
             display: flex;
-            justify-content: space-around;
-            background: #f7fafc;
-            padding: 15px;
-            border-radius: 8px;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        .stats .correct-text { color: #48bb78; font-weight: bold; font-size: 24px; display: block;}
-        .stats .incorrect-text { color: #f56565; font-weight: bold; font-size: 24px; display: block;}
-
-        #mistakes-container {
-            text-align: left;
-            margin-bottom: 20px;
+        input[type="text"] {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            box-sizing: border-box;
+            text-align: center;
+            transition: all 0.2s ease;
+            outline: none;
+            color: var(--text-main);
         }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        input[type="text"].correct-input {
+            border-color: var(--success);
+            background-color: #ecfdf5;
+            color: #065f46;
+        }
+
+        input[type="text"].incorrect-input {
+            border-color: var(--danger);
+            background-color: #fef2f2;
+            color: #991b1b;
+        }
+
+        .typing-feedback {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--danger);
+            min-height: 24px;
+        }
+
+        .typing-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .typing-actions button {
+            flex: 1;
+            margin: 0;
+            justify-content: center;
+        }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+
+        /* Экран результатов */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-label { font-size: 14px; color: var(--text-muted); margin-bottom: 5px; }
+        .stat-value { font-size: 28px; font-weight: 700; }
+        .val-correct { color: var(--success); }
+        .val-incorrect { color: var(--danger); }
 
         #mistakes-list {
             font-size: 15px;
-            color: #e53e3e;
-            max-height: 200px;
+            color: var(--danger);
+            max-height: 220px;
             overflow-y: auto;
-            padding-left: 20px;
-            background: #fff5f5;
-            padding: 15px 15px 15px 35px;
-            border-radius: 8px;
+            padding-left: 0;
+            list-style: none;
+            background: #fef2f2;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: left;
+            border: 1px solid #fecaca;
         }
 
-        #mistakes-list li { margin-bottom: 8px; }
-        #mistakes-list span { color: #333; font-weight: bold; }
+        #mistakes-list li {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #fecaca;
+        }
+        #mistakes-list li:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+        #mistakes-list span { color: var(--text-main); font-weight: bold; }
 
         .btn-primary {
-            background-color: #4299e1;
+            background-color: var(--primary);
             color: white;
             border: none;
-            width: 100%;
-            font-weight: bold;
-            font-size: 18px;
-            padding: 18px;
-            margin-top: 10px;
         }
-
-        .btn-primary:hover { background-color: #3182ce; }
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+            color: white;
+        }
         
-        .btn-secondary {
-            background-color: #e2e8f0;
-            color: #4a5568;
-            border: none;
-            width: 100%;
-            font-weight: bold;
-            font-size: 16px;
-            padding: 14px;
-            margin-top: 10px;
-        }
-
-        .btn-secondary:hover { background-color: #cbd5e0; }
-
-        /* Стили для новой кнопки "Назад" */
         .back-top-btn {
             background: none;
             border: none;
-            color: #7f8c8d;
+            color: var(--text-muted);
             font-size: 14px;
             cursor: pointer;
             padding: 0;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             text-align: left;
             width: 100%;
             font-weight: 600;
+            display: inline-block;
         }
-
         .back-top-btn:hover:not(:disabled) {
-            color: #2c3e50;
+            color: var(--text-main);
             background: none;
             border: none;
+            transform: none;
         }
     </style>
 </head>
@@ -172,39 +291,76 @@
 
 <div class="container">
     <div id="menu-screen">
-        <h1>Выберите уровень</h1>
-        <div class="options">
-            <button id="btn-test1">Тест 1 (Оригинальные 60 слов)</button>
-            <button id="btn-test2">Тест 2 (Новые 58 слов)</button>
+        <h1>Выберите тренировку</h1>
+        
+        <div class="block-container">
+            <div class="block-title">Блок 1 (Первые 60 слов)</div>
+            <div class="options">
+                <button id="btn-b1-std">🎯 Англ ➔ Рус (Выбор)</button>
+                <button id="btn-b1-rev">🔄 Рус ➔ Англ (Реверс)</button>
+                <button id="btn-b1-write">✍️ Письмо (Напиши сам)</button>
+            </div>
+        </div>
+
+        <div class="block-container">
+            <div class="block-title">Блок 2 (Новые 58 слов)</div>
+            <div class="options">
+                <button id="btn-b2-std">🎯 Англ ➔ Рус (Выбор)</button>
+                <button id="btn-b2-rev">🔄 Рус ➔ Англ (Реверс)</button>
+                <button id="btn-b2-write">✍️ Письмо (Напиши сам)</button>
+            </div>
         </div>
     </div>
 
     <div id="quiz-screen" class="hidden">
-        <button id="back-from-quiz-btn" class="back-top-btn">⬅ Назад к тестам</button>
-        <div class="progress" id="progress-text">Слово 1 из X</div>
+        <button id="back-from-quiz-btn" class="back-top-btn">← Вернуться в меню</button>
+        
+        <div class="progress-wrapper">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text" id="progress-text">1 / X</div>
+        </div>
+
         <h2 id="word-display">Word</h2>
+        
         <div class="options" id="options-container"></div>
+
+        <div id="typing-container" class="hidden">
+            <input type="text" id="typing-input" autocomplete="off" placeholder="Введите слово на английском...">
+            <div id="typing-feedback" class="typing-feedback hidden">Правильно: answer</div>
+            <div class="typing-actions">
+                <button id="btn-dont-know">Не знаю</button>
+                <button id="btn-check-typing" class="btn-primary">Проверить</button>
+            </div>
+        </div>
     </div>
 
     <div id="result-screen" class="hidden">
-        <h2>Тест завершен!</h2>
+        <h2>Тренировка завершена! 🏆</h2>
         <div class="stats">
-            <div>Правильно: <span id="score-correct" class="correct-text">0</span></div>
-            <div>Ошибок: <span id="score-incorrect" class="incorrect-text">0</span></div>
+            <div class="stat-box">
+                <div class="stat-label">Правильно</div>
+                <div class="stat-value val-correct" id="score-correct">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Ошибок</div>
+                <div class="stat-value val-incorrect" id="score-incorrect">0</div>
+            </div>
         </div>
         
         <div id="mistakes-container" class="hidden">
-            <p><b>Слова для повторения:</b></p>
+            <p style="text-align: left; font-weight: bold; margin-bottom: 10px; color: #1e293b;">Слова для повторения:</p>
             <ul id="mistakes-list"></ul>
         </div>
 
-        <button id="restart-btn" class="btn-primary">Пройти тест заново</button>
-        <button id="back-menu-btn" class="btn-secondary">Назад к тестам</button>
+        <button id="restart-btn" class="btn-primary" style="width: 100%; margin-bottom: 10px;">Повторить этот тест</button>
+        <button id="back-menu-btn" style="width: 100%; justify-content: center;">В главное меню</button>
     </div>
 </div>
 
 <script>
-    // --- ДАННЫЕ ДЛЯ ТЕСТА 1 ---
+    // --- ДАННЫЕ ДЛЯ БЛОКА 1 ---
     const quizData1 = [
         { word: "abandon", options: ["избегать", "покидать", "улучшать", "соединять"], answer: "покидать" },
         { word: "abandoned", options: ["заброшенный", "взрослый", "точный", "альтернативный"], answer: "заброшенный" },
@@ -268,66 +424,37 @@
         { word: "analogous", options: ["аналогичный", "доступный", "достаточный", "административный"], answer: "аналогичный" }
     ];
 
-    // --- ДАННЫЕ ДЛЯ ТЕСТА 2 (новые слова) ---
+    // --- ДАННЫЕ ДЛЯ БЛОКА 2 ---
     const quizData2 = [
-        { word: "analogy", answer: "аналогия" },
-        { word: "analyse", answer: "анализировать" },
-        { word: "analysis", answer: "анализ" },
-        { word: "analyst", answer: "аналитик" },
-        { word: "analytical", answer: "аналитический" },
-        { word: "analyze", answer: "анализировать" },
-        { word: "annual", answer: "ежегодный" },
-        { word: "anticipate", answer: "предвидеть, ожидать" },
-        { word: "anticipation", answer: "ожидание, предвкушение" },
-        { word: "apparent", answer: "очевидный, явный" },
-        { word: "append", answer: "добавлять, присоединять" },
-        { word: "appendix", answer: "приложение, дополнение" },
-        { word: "appreciable", answer: "заметный, значительный" },
-        { word: "appreciate", answer: "ценить, оценивать" },
-        { word: "appreciation", answer: "признательность, оценка" },
-        { word: "approach (v)", answer: "приближаться; подходить к (решению)" },
-        { word: "approach (n)", answer: "подход, метод" },
-        { word: "appropriate", answer: "подходящий, соответствующий" },
-        { word: "approximate (adj)", answer: "приблизительный" },
-        { word: "approximate (v)", answer: "приблизительно оценивать" },
-        { word: "approximation", answer: "приближение, приблизительная оценка" },
-        { word: "arbitrary", answer: "произвольный" },
-        { word: "area", answer: "область, площадь" },
-        { word: "aspect", answer: "аспект, сторона" },
-        { word: "assemble", answer: "собирать, составлять" },
-        { word: "assembly", answer: "сборка; собрание" },
-        { word: "assess", answer: "оценивать" },
-        { word: "assessment", answer: "оценка" },
-        { word: "assign", answer: "назначать; поручать" },
-        { word: "assignment", answer: "задание; назначение" },
-        { word: "assist", answer: "помогать, содействовать" },
-        { word: "assistance", answer: "помощь, содействие" },
-        { word: "assume", answer: "предполагать; принимать (на себя)" },
-        { word: "assuming", answer: "если предположить, что" },
-        { word: "assumption", answer: "предположение" },
-        { word: "assurance", answer: "уверенность; гарантия" },
-        { word: "assure", answer: "уверять, гарантировать" },
-        { word: "attach", answer: "прикреплять; присоединять" },
-        { word: "attachment", answer: "вложение; прикрепление" },
-        { word: "attain", answer: "достигать" },
-        { word: "attainment", answer: "достижение" },
-        { word: "attitude", answer: "отношение, позиция" },
-        { word: "attributable", answer: "относимый к; обусловленный" },
-        { word: "attribute (v)", answer: "приписывать" },
-        { word: "attribute (n)", answer: "атрибут; характеристика" },
-        { word: "author (n)", answer: "автор" },
-        { word: "author (v)", answer: "создавать; писать; санкционировать" },
-        { word: "authoritative", answer: "авторитетный" },
-        { word: "authority", answer: "власть; авторитет; орган власти" },
-        { word: "authorship", answer: "авторство" },
-        { word: "automate", answer: "автоматизировать" },
-        { word: "automated", answer: "автоматизированный" },
-        { word: "automatic", answer: "автоматический" },
-        { word: "automatically", answer: "автоматически" },
-        { word: "automation", answer: "автоматизация" },
-        { word: "available", answer: "доступный; имеющийся в наличии" },
-        { word: "aware", answer: "осведомлённый; осознающий" },
-        { word: "awareness", answer: "осведомлённость; осознание" }
+        { word: "analogy", answer: "аналогия" }, { word: "analyse", answer: "анализировать" },
+        { word: "analysis", answer: "анализ" }, { word: "analyst", answer: "аналитик" },
+        { word: "analytical", answer: "аналитический" }, { word: "analyze", answer: "анализировать" },
+        { word: "annual", answer: "ежегодный" }, { word: "anticipate", answer: "предвидеть, ожидать" },
+        { word: "anticipation", answer: "ожидание, предвкушение" }, { word: "apparent", answer: "очевидный, явный" },
+        { word: "append", answer: "добавлять, присоединять" }, { word: "appendix", answer: "приложение, дополнение" },
+        { word: "appreciable", answer: "заметный, значительный" }, { word: "appreciate", answer: "ценить, оценивать" },
+        { word: "appreciation", answer: "признательность, оценка" }, { word: "approach (v)", answer: "приближаться; подходить к (решению)" },
+        { word: "approach (n)", answer: "подход, метод" }, { word: "appropriate", answer: "подходящий, соответствующий" },
+        { word: "approximate (adj)", answer: "приблизительный" }, { word: "approximate (v)", answer: "приблизительно оценивать" },
+        { word: "approximation", answer: "приближение, приблизительная оценка" }, { word: "arbitrary", answer: "произвольный" },
+        { word: "area", answer: "область, площадь" }, { word: "aspect", answer: "аспект, сторона" },
+        { word: "assemble", answer: "собирать, составлять" }, { word: "assembly", answer: "сборка; собрание" },
+        { word: "assess", answer: "оценивать" }, { word: "assessment", answer: "оценка" },
+        { word: "assign", answer: "назначать; поручать" }, { word: "assignment", answer: "задание; назначение" },
+        { word: "assist", answer: "помогать, содействовать" }, { word: "assistance", answer: "помощь, содействие" },
+        { word: "assume", answer: "предполагать; принимать (на себя)" }, { word: "assuming", answer: "если предположить, что" },
+        { word: "assumption", answer: "предположение" }, { word: "assurance", answer: "уверенность; гарантия" },
+        { word: "assure", answer: "уверять, гарантировать" }, { word: "attach", answer: "прикреплять; присоединять" },
+        { word: "attachment", answer: "вложение; прикрепление" }, { word: "attain", answer: "достигать" },
+        { word: "attainment", answer: "достижение" }, { word: "attitude", answer: "отношение, позиция" },
+        { word: "attributable", answer: "относимый к; обусловленный" }, { word: "attribute (v)", answer: "приписывать" },
+        { word: "attribute (n)", answer: "атрибут; характеристика" }, { word: "author (n)", answer: "автор" },
+        { word: "author (v)", answer: "создавать; писать; санкционировать" }, { word: "authoritative", answer: "авторитетный" },
+        { word: "authority", answer: "власть; авторитет; орган власти" }, { word: "authorship", answer: "авторство" },
+        { word: "automate", answer: "автоматизировать" }, { word: "automated", answer: "автоматизированный" },
+        { word: "automatic", answer: "автоматический" }, { word: "automatically", answer: "автоматически" },
+        { word: "automation", answer: "автоматизация" }, { word: "available", answer: "доступный; имеющийся в наличии" },
+        { word: "aware", answer: "осведомлённый; осознающий" }, { word: "awareness", answer: "осведомлённость; осознание" }
     ];
 
     let activeDataPool = [];
@@ -336,16 +463,20 @@
     let correctCount = 0;
     let incorrectCount = 0;
     let mistakes = [];
-    let timeoutId = null; // Переменная для хранения таймера
+    let timeoutId = null;
+    let currentTestMode = 'standard'; // 'standard', 'reverse', 'typing'
 
     const menuScreen = document.getElementById('menu-screen');
     const quizScreen = document.getElementById('quiz-screen');
     const resultScreen = document.getElementById('result-screen');
     const wordDisplay = document.getElementById('word-display');
     const optionsContainer = document.getElementById('options-container');
+    const typingContainer = document.getElementById('typing-container');
+    const typingInput = document.getElementById('typing-input');
+    const typingFeedback = document.getElementById('typing-feedback');
     const progressText = document.getElementById('progress-text');
+    const progressFill = document.getElementById('progress-fill');
 
-    // Функция для перемешивания массива
     function shuffleArray(array) {
         let shuffled = [...array];
         for (let i = shuffled.length - 1; i > 0; i--) {
@@ -355,31 +486,40 @@
         return shuffled;
     }
 
-    // Автоматическая генерация неправильных вариантов из текущего словаря
-    function getOptionsForWord(currentData, dataPool) {
-        if (currentData.options) return currentData.options;
-        
-        let optionsSet = new Set([currentData.answer]);
+    // Очищает слово от (v), (n), (adj) для режима письма
+    function cleanWord(word) {
+        return word.replace(/\s*\(.*?\)\s*/g, '').toLowerCase().trim();
+    }
+
+    function getOptionsForWord(currentData, dataPool, isReverse) {
+        if (!isReverse && currentData.options) return currentData.options;
+        const targetProp = isReverse ? 'word' : 'answer';
+        const correctValue = currentData[targetProp];
+        let optionsSet = new Set([correctValue]);
         
         while(optionsSet.size < 4) {
             let randomWord = dataPool[Math.floor(Math.random() * dataPool.length)];
-            optionsSet.add(randomWord.answer);
+            optionsSet.add(randomWord[targetProp]);
         }
         return Array.from(optionsSet);
     }
 
     function showMenu() {
-        // Очищаем таймер, чтобы следующий вопрос не переключился случайно, если мы вышли в меню
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-        }
+        if (timeoutId) clearTimeout(timeoutId);
         menuScreen.classList.remove('hidden');
         quizScreen.classList.add('hidden');
         resultScreen.classList.add('hidden');
     }
 
-    function startTest(dataArray) {
+    function updateProgress() {
+        progressText.textContent = `${currentWordIndex + 1} / ${shuffledQuizData.length}`;
+        const percentage = ((currentWordIndex) / shuffledQuizData.length) * 100;
+        progressFill.style.width = `${percentage}%`;
+    }
+
+    function startTest(dataArray, mode) {
         activeDataPool = dataArray;
+        currentTestMode = mode;
         currentWordIndex = 0;
         correctCount = 0;
         incorrectCount = 0;
@@ -400,27 +540,51 @@
             return;
         }
 
+        updateProgress();
         const currentData = shuffledQuizData[currentWordIndex];
-        wordDisplay.textContent = currentData.word;
-        progressText.textContent = `Слово ${currentWordIndex + 1} из ${shuffledQuizData.length}`;
-
-        const rawOptions = getOptionsForWord(currentData, activeDataPool);
-        const shuffledOptions = shuffleArray(rawOptions);
-
+        
+        // Сброс UI
         optionsContainer.innerHTML = '';
-        shuffledOptions.forEach(optionText => {
-            const button = document.createElement('button');
-            button.textContent = optionText;
-            button.onclick = () => checkAnswer(button, optionText, currentData);
-            optionsContainer.appendChild(button);
-        });
+        typingInput.value = '';
+        typingInput.className = '';
+        typingInput.disabled = false;
+        typingFeedback.classList.add('hidden');
+        
+        if (currentTestMode === 'standard' || currentTestMode === 'reverse') {
+            optionsContainer.classList.remove('hidden');
+            typingContainer.classList.add('hidden');
+            
+            const isReverse = currentTestMode === 'reverse';
+            wordDisplay.textContent = isReverse ? currentData.answer : currentData.word;
+            
+            const rawOptions = getOptionsForWord(currentData, activeDataPool, isReverse);
+            const shuffledOptions = shuffleArray(rawOptions);
+
+            shuffledOptions.forEach(optionText => {
+                const btn = document.createElement('button');
+                btn.textContent = optionText;
+                btn.onclick = () => checkAnswerStandard(btn, optionText, currentData, isReverse);
+                optionsContainer.appendChild(btn);
+            });
+
+        } else if (currentTestMode === 'typing') {
+            // Режим письма (показываем русский, просим английский)
+            optionsContainer.classList.add('hidden');
+            typingContainer.classList.remove('hidden');
+            wordDisplay.textContent = currentData.answer; // Показываем русский перевод
+            
+            // Автофокус для удобства
+            setTimeout(() => typingInput.focus(), 100);
+        }
     }
 
-    function checkAnswer(buttonElement, selectedText, currentData) {
+    // Проверка для режимов с кнопками
+    function checkAnswerStandard(buttonElement, selectedText, currentData, isReverse) {
         const allButtons = optionsContainer.querySelectorAll('button');
         allButtons.forEach(btn => btn.disabled = true);
 
-        const isCorrect = selectedText === currentData.answer;
+        const correctAnswer = isReverse ? currentData.word : currentData.answer;
+        const isCorrect = selectedText === correctAnswer;
 
         if (isCorrect) {
             buttonElement.classList.add('correct');
@@ -431,20 +595,52 @@
             mistakes.push(`<span>${currentData.word}</span> — ${currentData.answer}`);
             
             allButtons.forEach(btn => {
-                if (btn.textContent === currentData.answer) {
-                    btn.classList.add('correct');
-                }
+                if (btn.textContent === correctAnswer) btn.classList.add('correct');
             });
         }
-
-        // Сохраняем ID таймера, чтобы его можно было сбросить при нажатии "Назад"
-        timeoutId = setTimeout(() => {
-            currentWordIndex++;
-            loadWord();
-        }, 1000);
+        timeoutId = setTimeout(() => { currentWordIndex++; loadWord(); }, 1000);
     }
 
+    // Проверка для режима Письма
+    function handleTypingAnswer(isSkip = false) {
+        if (typingInput.disabled) return;
+        
+        const currentData = shuffledQuizData[currentWordIndex];
+        const userAnswer = cleanWord(typingInput.value);
+        const correctAnswerClean = cleanWord(currentData.word);
+        
+        typingInput.disabled = true;
+
+        if (!isSkip && userAnswer === correctAnswerClean) {
+            // Правильно
+            typingInput.classList.add('correct-input');
+            correctCount++;
+            timeoutId = setTimeout(() => { currentWordIndex++; loadWord(); }, 700);
+        } else {
+            // Ошибка или "Не знаю"
+            typingInput.classList.add('incorrect-input');
+            incorrectCount++;
+            mistakes.push(`<span>${currentData.word}</span> — ${currentData.answer}`);
+            
+            typingFeedback.textContent = `Правильно: ${currentData.word}`;
+            typingFeedback.classList.remove('hidden');
+            
+            timeoutId = setTimeout(() => { currentWordIndex++; loadWord(); }, 2000); // Даем больше времени посмотреть
+        }
+    }
+
+    document.getElementById('btn-check-typing').addEventListener('click', () => handleTypingAnswer(false));
+    document.getElementById('btn-dont-know').addEventListener('click', () => handleTypingAnswer(true));
+    
+    // Поддержка клавиши Enter для ввода
+    typingInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            handleTypingAnswer(false);
+        }
+    });
+
     function showResults() {
+        progressFill.style.width = `100%`;
         quizScreen.classList.add('hidden');
         resultScreen.classList.remove('hidden');
 
@@ -462,15 +658,21 @@
         }
     }
 
-    // Слушатели кнопок
-    document.getElementById('btn-test1').addEventListener('click', () => startTest(quizData1));
-    document.getElementById('btn-test2').addEventListener('click', () => startTest(quizData2));
+    // Слушатели кнопок для БЛОКА 1
+    document.getElementById('btn-b1-std').addEventListener('click', () => startTest(quizData1, 'standard'));
+    document.getElementById('btn-b1-rev').addEventListener('click', () => startTest(quizData1, 'reverse'));
+    document.getElementById('btn-b1-write').addEventListener('click', () => startTest(quizData1, 'typing'));
+
+    // Слушатели кнопок для БЛОКА 2
+    document.getElementById('btn-b2-std').addEventListener('click', () => startTest(quizData2, 'standard'));
+    document.getElementById('btn-b2-rev').addEventListener('click', () => startTest(quizData2, 'reverse'));
+    document.getElementById('btn-b2-write').addEventListener('click', () => startTest(quizData2, 'typing'));
     
-    // Две кнопки, ведущие в меню
+    // Навигация
     document.getElementById('back-menu-btn').addEventListener('click', showMenu);
     document.getElementById('back-from-quiz-btn').addEventListener('click', showMenu);
     
-    document.getElementById('restart-btn').addEventListener('click', () => startTest(activeDataPool));
+    document.getElementById('restart-btn').addEventListener('click', () => startTest(activeDataPool, currentTestMode));
 
 </script>
 
