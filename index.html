@@ -26,7 +26,7 @@
             min-height: 100vh;
             margin: 0;
             color: var(--text-main);
-            padding: 20px 0; /* Добавили отступ для скролла, если блоков станет много */
+            padding: 20px 0;
         }
 
         .container {
@@ -40,7 +40,7 @@
             position: relative;
             box-sizing: border-box;
             max-height: 95vh;
-            overflow-y: auto; /* Добавили скролл внутри карточки, если экран маленький */
+            overflow-y: auto;
         }
 
         h1 {
@@ -314,11 +314,20 @@
         </div>
 
         <div class="block-container">
-            <div class="block-title">Блок 3 (Новые 59 слов)</div>
+            <div class="block-title">Блок 3 (59 слов)</div>
             <div class="options">
                 <button id="btn-b3-std">🎯 Англ ➔ Рус (Выбор)</button>
                 <button id="btn-b3-rev">🔄 Рус ➔ Англ (Реверс)</button>
                 <button id="btn-b3-write">✍️ Письмо (Напиши сам)</button>
+            </div>
+        </div>
+
+        <div class="block-container">
+            <div class="block-title">Блок 4 (Новые 60 слов)</div>
+            <div class="options">
+                <button id="btn-b4-std">🎯 Англ ➔ Рус (Выбор)</button>
+                <button id="btn-b4-rev">🔄 Рус ➔ Англ (Реверс)</button>
+                <button id="btn-b4-write">✍️ Письмо (Напиши сам)</button>
             </div>
         </div>
     </div>
@@ -467,7 +476,7 @@
         { word: "aware", answer: "осведомлённый; осознающий" }, { word: "awareness", answer: "осведомлённость; осознание" }
     ];
 
-    // --- ДАННЫЕ ДЛЯ БЛОКА 3 (Новые 59 слов) ---
+    // --- ДАННЫЕ ДЛЯ БЛОКА 3 ---
     const quizData3 = [
         { word: "behalf (n)", answer: "интерес, польза (on behalf of — от имени)" },
         { word: "beneficial (adj)", answer: "полезный, благоприятный" },
@@ -530,6 +539,70 @@
         { word: "commencement (n)", answer: "начало" }
     ];
 
+    // --- ДАННЫЕ ДЛЯ БЛОКА 4 ---
+    const quizData4 = [
+        { word: "comment (n)", answer: "комментарий" },
+        { word: "comment (v)", answer: "комментировать" },
+        { word: "commentary (n)", answer: "комментарий, пояснительный обзор" },
+        { word: "commentator (n)", answer: "комментатор" },
+        { word: "commission (n)", answer: "комиссия; поручение; комиссионные" },
+        { word: "commission (v)", answer: "поручать; назначать; вводить в эксплуатацию" },
+        { word: "commit (v)", answer: "совершать (преступление); брать на себя обязательство" },
+        { word: "commitment (n)", answer: "обязательство; преданность" },
+        { word: "committed (adj)", answer: "преданный; приверженный" },
+        { word: "commodity (n)", answer: "товар, сырьевой товар" },
+        { word: "communicable (adj)", answer: "заразный; передаваемый" },
+        { word: "communicate (v)", answer: "общаться; передавать (информацию)" },
+        { word: "communication (n)", answer: "общение; связь; коммуникация" },
+        { word: "communicative (adj)", answer: "общительный; коммуникабельный" },
+        { word: "community (n)", answer: "сообщество; община" },
+        { word: "compatibility (n)", answer: "совместимость" },
+        { word: "compatible (adj)", answer: "совместимый" },
+        { word: "compensate (v)", answer: "компенсировать; возмещать" },
+        { word: "compensation (n)", answer: "компенсация; возмещение" },
+        { word: "compensatory (adj)", answer: "компенсационный" },
+        { word: "compilation (n)", answer: "сборник; компиляция" },
+        { word: "compile (v)", answer: "составлять; компилировать" },
+        { word: "complement (n)", answer: "дополнение" },
+        { word: "complement (v)", answer: "дополнять" },
+        { word: "complementary (adj)", answer: "взаимодополняющий" },
+        { word: "complex (adj)", answer: "сложный" },
+        { word: "complex (n)", answer: "комплекс" },
+        { word: "complexity (n)", answer: "сложность" },
+        { word: "component (n)", answer: "компонент; составная часть" },
+        { word: "component (adj)", answer: "составной" },
+        { word: "compound (n)", answer: "соединение; смесь" },
+        { word: "compound (v)", answer: "соединять; усугублять" },
+        { word: "compound (adj)", answer: "составной" },
+        { word: "comprehensive (adj)", answer: "всесторонний; полный" },
+        { word: "comprise (v)", answer: "включать в себя; состоять из" },
+        { word: "computation (n)", answer: "вычисление" },
+        { word: "compute (v)", answer: "вычислять" },
+        { word: "computer (n)", answer: "компьютер" },
+        { word: "computing (n)", answer: "вычислительная техника; информатика" },
+        { word: "conceivable (adj)", answer: "мыслимый; возможный" },
+        { word: "conceive (v)", answer: "задумывать; представлять; понимать" },
+        { word: "concentrate (v)", answer: "концентрироваться; сосредотачиваться" },
+        { word: "concentration (n)", answer: "концентрация; сосредоточенность" },
+        { word: "concept (n)", answer: "концепция; понятие" },
+        { word: "conception (n)", answer: "замысел; понимание" },
+        { word: "conceptual (adj)", answer: "концептуальный" },
+        { word: "conclude (v)", answer: "заключать; завершать" },
+        { word: "concluding (adj)", answer: "заключительный" },
+        { word: "conclusion (n)", answer: "вывод; заключение" },
+        { word: "conclusive (adj)", answer: "убедительный; окончательный" },
+        { word: "concurrent (adj)", answer: "одновременный; параллельный" },
+        { word: "conduct (v)", answer: "проводить (мероприятие, исследование); вести себя" },
+        { word: "conduct (n)", answer: "поведение; руководство" },
+        { word: "confer (v)", answer: "совещаться; предоставлять (степень, награду)" },
+        { word: "conference (n)", answer: "конференция" },
+        { word: "confine (v)", answer: "ограничивать; заключать (под стражу)" },
+        { word: "confined (adj)", answer: "ограниченный; замкнутый" },
+        { word: "confirm (v)", answer: "подтверждать" },
+        { word: "confirmation (n)", answer: "подтверждение" },
+        { word: "conflict (n)", answer: "конфликт; столкновение" }
+    ];
+
     let activeDataPool = [];
     let shuffledQuizData = [];
     let currentWordIndex = 0;
@@ -537,7 +610,7 @@
     let incorrectCount = 0;
     let mistakes = [];
     let timeoutId = null;
-    let currentTestMode = 'standard'; // 'standard', 'reverse', 'typing'
+    let currentTestMode = 'standard'; 
 
     const menuScreen = document.getElementById('menu-screen');
     const quizScreen = document.getElementById('quiz-screen');
@@ -727,6 +800,11 @@
     document.getElementById('btn-b3-std').addEventListener('click', () => startTest(quizData3, 'standard'));
     document.getElementById('btn-b3-rev').addEventListener('click', () => startTest(quizData3, 'reverse'));
     document.getElementById('btn-b3-write').addEventListener('click', () => startTest(quizData3, 'typing'));
+
+    // Блок 4
+    document.getElementById('btn-b4-std').addEventListener('click', () => startTest(quizData4, 'standard'));
+    document.getElementById('btn-b4-rev').addEventListener('click', () => startTest(quizData4, 'reverse'));
+    document.getElementById('btn-b4-write').addEventListener('click', () => startTest(quizData4, 'typing'));
     
     // Навигация
     document.getElementById('back-menu-btn').addEventListener('click', showMenu);
