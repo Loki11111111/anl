@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тренажер английских слов</title>
+    <title>Тренажер английских слов PRO</title>
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
+            --primary: #6366f1; /* Индиго */
+            --primary-hover: #4f46e5;
+            --secondary: #8b5cf6; /* Фиолетовый для карточек */
             --success: #10b981;
-            --danger: #ef4444;
-            --bg-color: #f1f5f9;
+            --danger: #f43f5e;
+            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%);
             --card-bg: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
@@ -18,8 +19,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-gradient);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -31,11 +32,11 @@
 
         .container {
             background-color: var(--card-bg);
-            padding: 35px 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.1);
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             text-align: center;
             position: relative;
             box-sizing: border-box;
@@ -44,14 +45,15 @@
         }
 
         h1 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 25px;
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 30px;
             color: var(--text-main);
+            letter-spacing: -0.5px;
         }
 
         h2 {
-            font-size: 26px;
+            font-size: 24px;
             margin-bottom: 25px;
             color: var(--primary);
         }
@@ -59,25 +61,29 @@
         /* Дизайн меню */
         .block-container {
             background: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 15px;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 20px;
             margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .block-container:hover {
+            border-color: #c7d2fe;
         }
 
         .block-title {
-            font-size: 15px;
-            color: var(--text-muted);
+            font-size: 16px;
+            color: var(--primary);
             text-align: center;
-            font-weight: 600;
-            margin-bottom: 12px;
+            font-weight: 700;
+            margin-bottom: 15px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
         .options {
-            display: flex;
-            flex-direction: column;
+            display: grid;
             gap: 10px;
         }
 
@@ -86,31 +92,42 @@
             padding: 14px 18px;
             font-size: 16px;
             border: 2px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             background-color: var(--card-bg);
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             color: var(--text-main);
-            font-weight: 500;
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
         }
 
-        #menu-screen button {
-            justify-content: flex-start;
+        .btn-flash {
+            background-color: #f5f3ff;
+            border-color: #ddd6fe;
+            color: var(--secondary);
+            margin-bottom: 5px;
         }
 
-        button:hover:not(:disabled) {
+        .btn-flash:hover:not(:disabled) {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+
+        button:hover:not(:disabled):not(.btn-flash) {
             border-color: var(--primary);
-            background-color: #f5f3ff;
             color: var(--primary);
-            transform: translateY(-1px);
+            background-color: #f8fafc;
+            transform: translateY(-2px);
         }
 
         button:active:not(:disabled) {
-            transform: translateY(1px);
+            transform: translateY(0);
         }
 
         button.correct {
@@ -132,11 +149,11 @@
 
         /* Прогресс бар */
         .progress-wrapper {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         
         .progress-bar {
-            height: 8px;
+            height: 10px;
             background-color: var(--border-color);
             border-radius: 10px;
             overflow: hidden;
@@ -147,13 +164,71 @@
             height: 100%;
             background-color: var(--primary);
             width: 0%;
-            transition: width 0.3s ease;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .progress-text {
             color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Режим карточек (Flashcards) */
+        .flashcard-container {
+            perspective: 1000px;
+            margin-bottom: 25px;
+            height: 220px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+        }
+
+        .flashcard-back {
+            background-color: white;
+            color: var(--text-main);
+            border: 2px solid var(--border-color);
+            transform: rotateY(180deg);
+            font-size: 22px;
+        }
+        
+        .flashcard-hint {
+            position: absolute;
+            bottom: 15px;
             font-size: 13px;
-            font-weight: 500;
+            opacity: 0.7;
+            font-weight: normal;
         }
 
         /* Режим письма */
@@ -165,20 +240,21 @@
 
         input[type="text"] {
             width: 100%;
-            padding: 16px;
-            font-size: 18px;
+            padding: 18px;
+            font-size: 20px;
             border: 2px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             box-sizing: border-box;
             text-align: center;
             transition: all 0.2s ease;
             outline: none;
             color: var(--text-main);
+            font-weight: 600;
         }
 
         input[type="text"]:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
         input[type="text"].correct-input {
@@ -211,10 +287,10 @@
         .stats {
             display: flex;
             justify-content: center;
-            gap: 30px;
+            gap: 40px;
             background: #f8fafc;
-            padding: 20px;
-            border-radius: 16px;
+            padding: 25px;
+            border-radius: 20px;
             margin-bottom: 25px;
             border: 1px solid var(--border-color);
         }
@@ -225,32 +301,32 @@
             align-items: center;
         }
 
-        .stat-label { font-size: 14px; color: var(--text-muted); margin-bottom: 5px; }
-        .stat-value { font-size: 28px; font-weight: 700; }
+        .stat-label { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; text-transform: uppercase;}
+        .stat-value { font-size: 36px; font-weight: 800; }
         .val-correct { color: var(--success); }
         .val-incorrect { color: var(--danger); }
 
         #mistakes-list {
-            font-size: 15px;
+            font-size: 16px;
             color: var(--danger);
-            max-height: 220px;
+            max-height: 200px;
             overflow-y: auto;
             padding-left: 0;
             list-style: none;
             background: #fef2f2;
-            padding: 15px;
-            border-radius: 12px;
+            padding: 20px;
+            border-radius: 16px;
             text-align: left;
             border: 1px solid #fecaca;
         }
 
         #mistakes-list li {
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #fecaca;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #fca5a5;
         }
         #mistakes-list li:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-        #mistakes-list span { color: var(--text-main); font-weight: bold; }
+        #mistakes-list span { color: var(--text-main); font-weight: 700; }
 
         .btn-primary {
             background-color: var(--primary);
@@ -260,80 +336,97 @@
         .btn-primary:hover:not(:disabled) {
             background-color: var(--primary-hover);
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-review {
+            background-color: #fbbf24;
+            color: #78350f;
+            border: none;
+            font-weight: bold;
+        }
+        .btn-review:hover {
+            background-color: #f59e0b;
+            color: white;
         }
         
         .back-top-btn {
             background: none;
             border: none;
             color: var(--text-muted);
-            font-size: 14px;
+            font-size: 15px;
             cursor: pointer;
             padding: 0;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: left;
             width: 100%;
-            font-weight: 600;
+            font-weight: 700;
             display: inline-block;
         }
         .back-top-btn:hover:not(:disabled) {
-            color: var(--text-main);
+            color: var(--primary);
             background: none;
             border: none;
             transform: none;
         }
         
         /* Стилизация скроллбара */
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="menu-screen">
-        <h1>Выберите тренировку</h1>
+        <h1>Тренажер английских слов</h1>
         
         <div class="block-container">
             <div class="block-title">Блок 1 (Первые 60 слов)</div>
             <div class="options">
-                <button id="btn-b1-std">🎯 Англ ➔ Рус (Выбор)</button>
-                <button id="btn-b1-rev">🔄 Рус ➔ Англ (Реверс)</button>
-                <button id="btn-b1-write">✍️ Письмо (Напиши сам)</button>
+                <button class="btn-flash" onclick="startFlashcards(quizData1)">🃏 Карточки (Изучение)</button>
+                <button onclick="startTest(quizData1, 'standard')">🎯 Англ ➔ Рус</button>
+                <button onclick="startTest(quizData1, 'reverse')">🔄 Рус ➔ Англ</button>
+                <button onclick="startTest(quizData1, 'typing')">✍️ Письмо</button>
             </div>
         </div>
 
         <div class="block-container">
             <div class="block-title">Блок 2 (58 слов)</div>
             <div class="options">
-                <button id="btn-b2-std">🎯 Англ ➔ Рус (Выбор)</button>
-                <button id="btn-b2-rev">🔄 Рус ➔ Англ (Реверс)</button>
-                <button id="btn-b2-write">✍️ Письмо (Напиши сам)</button>
+                <button class="btn-flash" onclick="startFlashcards(quizData2)">🃏 Карточки (Изучение)</button>
+                <button onclick="startTest(quizData2, 'standard')">🎯 Англ ➔ Рус</button>
+                <button onclick="startTest(quizData2, 'reverse')">🔄 Рус ➔ Англ</button>
+                <button onclick="startTest(quizData2, 'typing')">✍️ Письмо</button>
             </div>
         </div>
 
         <div class="block-container">
             <div class="block-title">Блок 3 (59 слов)</div>
             <div class="options">
-                <button id="btn-b3-std">🎯 Англ ➔ Рус (Выбор)</button>
-                <button id="btn-b3-rev">🔄 Рус ➔ Англ (Реверс)</button>
-                <button id="btn-b3-write">✍️ Письмо (Напиши сам)</button>
+                <button class="btn-flash" onclick="startFlashcards(quizData3)">🃏 Карточки (Изучение)</button>
+                <button onclick="startTest(quizData3, 'standard')">🎯 Англ ➔ Рус</button>
+                <button onclick="startTest(quizData3, 'reverse')">🔄 Рус ➔ Англ</button>
+                <button onclick="startTest(quizData3, 'typing')">✍️ Письмо</button>
             </div>
         </div>
 
         <div class="block-container">
             <div class="block-title">Блок 4 (Новые 60 слов)</div>
             <div class="options">
-                <button id="btn-b4-std">🎯 Англ ➔ Рус (Выбор)</button>
-                <button id="btn-b4-rev">🔄 Рус ➔ Англ (Реверс)</button>
-                <button id="btn-b4-write">✍️ Письмо (Напиши сам)</button>
+                <button class="btn-flash" onclick="startFlashcards(quizData4)">🃏 Карточки (Изучение)</button>
+                <button onclick="startTest(quizData4, 'standard')">🎯 Англ ➔ Рус</button>
+                <button onclick="startTest(quizData4, 'reverse')">🔄 Рус ➔ Англ</button>
+                <button onclick="startTest(quizData4, 'typing')">✍️ Письмо</button>
             </div>
         </div>
     </div>
 
     <div id="quiz-screen" class="hidden">
-        <button id="back-from-quiz-btn" class="back-top-btn">← Вернуться в меню</button>
+        <button id="back-from-quiz-btn" class="back-top-btn">← В главное меню</button>
         
         <div class="progress-wrapper">
             <div class="progress-bar">
@@ -342,17 +435,33 @@
             <div class="progress-text" id="progress-text">1 / X</div>
         </div>
 
-        <h2 id="word-display">Word</h2>
-        
-        <div class="options" id="options-container"></div>
-
-        <div id="typing-container" class="hidden">
-            <input type="text" id="typing-input" autocomplete="off" placeholder="Введите слово на английском...">
-            <div class="typing-actions">
-                <button id="btn-dont-know">Не знаю</button>
-                <button id="btn-check-typing" class="btn-primary">Проверить</button>
+        <div id="test-mode-container">
+            <h2 id="word-display">Word</h2>
+            <div class="options" id="options-container"></div>
+            <div id="typing-container" class="hidden">
+                <input type="text" id="typing-input" autocomplete="off" placeholder="Напиши на английском...">
+                <div class="typing-actions">
+                    <button id="btn-dont-know">Не знаю</button>
+                    <button id="btn-check-typing" class="btn-primary">Проверить</button>
+                </div>
             </div>
         </div>
+
+        <div id="flashcard-mode-container" class="hidden">
+            <div class="flashcard-container" onclick="flipCard()">
+                <div class="flashcard" id="flashcard">
+                    <div class="flashcard-face flashcard-front">
+                        <span id="fc-front-text">Word</span>
+                        <div class="flashcard-hint">Нажми, чтобы перевернуть</div>
+                    </div>
+                    <div class="flashcard-face flashcard-back">
+                        <span id="fc-back-text">Перевод</span>
+                    </div>
+                </div>
+            </div>
+            <button id="btn-next-flashcard" class="btn-primary" style="width: 100%;">Следующее слово →</button>
+        </div>
+
     </div>
 
     <div id="result-screen" class="hidden">
@@ -369,11 +478,12 @@
         </div>
         
         <div id="mistakes-container" class="hidden">
-            <p style="text-align: left; font-weight: bold; margin-bottom: 10px; color: #1e293b;">Слова для повторения:</p>
+            <p style="text-align: left; font-weight: bold; margin-bottom: 10px; color: #1e293b;">Нужно повторить:</p>
             <ul id="mistakes-list"></ul>
+            <button id="btn-review-mistakes" class="btn-review" style="width: 100%; margin-bottom: 15px;">🔁 Отработать ошибки</button>
         </div>
 
-        <button id="restart-btn" class="btn-primary" style="width: 100%; margin-bottom: 10px;">Повторить этот тест</button>
+        <button id="restart-btn" class="btn-primary" style="width: 100%; margin-bottom: 10px;">Повторить этот тест заново</button>
         <button id="back-menu-btn" style="width: 100%; justify-content: center;">В главное меню</button>
     </div>
 </div>
@@ -588,6 +698,7 @@
         { word: "conception (n)", answer: "замысел; понимание" },
         { word: "conceptual (adj)", answer: "концептуальный" },
         { word: "conclude (v)", answer: "заключать; завершать" },
+        { word: "concluding (adj)", array: "заключительный" }, // Опечатка исправлена ниже в логике, но лучше тут:
         { word: "concluding (adj)", answer: "заключительный" },
         { word: "conclusion (n)", answer: "вывод; заключение" },
         { word: "conclusive (adj)", answer: "убедительный; окончательный" },
@@ -608,17 +719,28 @@
     let currentWordIndex = 0;
     let correctCount = 0;
     let incorrectCount = 0;
-    let mistakes = [];
+    let mistakesTextList = [];
+    let mistakesDataObj = []; // Умная работа над ошибками: храним сами объекты
     let timeoutId = null;
     let currentTestMode = 'standard'; 
 
     const menuScreen = document.getElementById('menu-screen');
     const quizScreen = document.getElementById('quiz-screen');
     const resultScreen = document.getElementById('result-screen');
+    
+    // Элементы режима проверки
+    const testModeContainer = document.getElementById('test-mode-container');
     const wordDisplay = document.getElementById('word-display');
     const optionsContainer = document.getElementById('options-container');
     const typingContainer = document.getElementById('typing-container');
     const typingInput = document.getElementById('typing-input');
+    
+    // Элементы режима карточек
+    const flashcardModeContainer = document.getElementById('flashcard-mode-container');
+    const flashcardElement = document.getElementById('flashcard');
+    const fcFrontText = document.getElementById('fc-front-text');
+    const fcBackText = document.getElementById('fc-back-text');
+    
     const progressText = document.getElementById('progress-text');
     const progressFill = document.getElementById('progress-fill');
 
@@ -643,7 +765,8 @@
         
         while(optionsSet.size < 4) {
             let randomWord = dataPool[Math.floor(Math.random() * dataPool.length)];
-            optionsSet.add(randomWord[targetProp]);
+            // Fix: handle missing answers gracefully
+            if(randomWord[targetProp]) optionsSet.add(randomWord[targetProp]);
         }
         return Array.from(optionsSet);
     }
@@ -661,19 +784,65 @@
         progressFill.style.width = `${percentage}%`;
     }
 
+    // --- ЛОГИКА КАРТОЧЕК ---
+    function startFlashcards(dataArray) {
+        activeDataPool = dataArray;
+        currentTestMode = 'flashcard';
+        currentWordIndex = 0;
+        shuffledQuizData = shuffleArray(activeDataPool);
+        
+        menuScreen.classList.add('hidden');
+        resultScreen.classList.add('hidden');
+        quizScreen.classList.remove('hidden');
+        
+        testModeContainer.classList.add('hidden');
+        flashcardModeContainer.classList.remove('hidden');
+        
+        loadFlashcard();
+    }
+
+    function loadFlashcard() {
+        if (currentWordIndex >= shuffledQuizData.length) {
+            // Карточки закончились, возвращаем в меню (оценок тут нет)
+            showMenu();
+            return;
+        }
+        
+        updateProgress();
+        flashcardElement.classList.remove('flipped');
+        
+        const currentData = shuffledQuizData[currentWordIndex];
+        fcFrontText.textContent = currentData.word;
+        fcBackText.textContent = currentData.answer;
+    }
+
+    function flipCard() {
+        flashcardElement.classList.toggle('flipped');
+    }
+
+    document.getElementById('btn-next-flashcard').addEventListener('click', () => {
+        currentWordIndex++;
+        loadFlashcard();
+    });
+
+    // --- ЛОГИКА ТЕСТИРОВАНИЯ ---
     function startTest(dataArray, mode) {
         activeDataPool = dataArray;
         currentTestMode = mode;
         currentWordIndex = 0;
         correctCount = 0;
         incorrectCount = 0;
-        mistakes = [];
+        mistakesTextList = [];
+        mistakesDataObj = []; 
         
         shuffledQuizData = shuffleArray(activeDataPool);
         
         menuScreen.classList.add('hidden');
         resultScreen.classList.add('hidden');
         quizScreen.classList.remove('hidden');
+        
+        flashcardModeContainer.classList.add('hidden');
+        testModeContainer.classList.remove('hidden');
         
         loadWord();
     }
@@ -699,7 +868,14 @@
             const isReverse = currentTestMode === 'reverse';
             wordDisplay.textContent = isReverse ? currentData.answer : currentData.word;
             
-            const rawOptions = getOptionsForWord(currentData, activeDataPool, isReverse);
+            // Если включили отработку ошибок, dataPool должен быть оригинальным словарем для генерации вариантов
+            let poolForOptions = activeDataPool.length >= 4 ? activeDataPool : window['quizData' + (activeDataPool === mistakesDataObj ? "1" : "1")]; 
+            // fallback to original pool logic (just use current pool, if < 4 it loops, so need safe fallback)
+            if(activeDataPool.length < 4) {
+               poolForOptions = [...activeDataPool, ...quizData1].slice(0, 4); // safely pad it
+            }
+
+            const rawOptions = getOptionsForWord(currentData, poolForOptions, isReverse);
             const shuffledOptions = shuffleArray(rawOptions);
 
             shuffledOptions.forEach(optionText => {
@@ -718,6 +894,14 @@
         }
     }
 
+    function registerMistake(currentData) {
+        incorrectCount++;
+        mistakesTextList.push(`<span>${currentData.word}</span> — ${currentData.answer}`);
+        if (!mistakesDataObj.includes(currentData)) {
+            mistakesDataObj.push(currentData);
+        }
+    }
+
     function checkAnswerStandard(buttonElement, selectedText, currentData, isReverse) {
         const allButtons = optionsContainer.querySelectorAll('button');
         allButtons.forEach(btn => btn.disabled = true);
@@ -730,8 +914,7 @@
             correctCount++;
         } else {
             buttonElement.classList.add('incorrect');
-            incorrectCount++;
-            mistakes.push(`<span>${currentData.word}</span> — ${currentData.answer}`);
+            registerMistake(currentData);
         }
         
         timeoutId = setTimeout(() => { currentWordIndex++; loadWord(); }, 700);
@@ -751,8 +934,7 @@
             correctCount++;
         } else {
             typingInput.classList.add('incorrect-input');
-            incorrectCount++;
-            mistakes.push(`<span>${currentData.word}</span> — ${currentData.answer}`);
+            registerMistake(currentData);
         }
         
         timeoutId = setTimeout(() => { currentWordIndex++; loadWord(); }, 700);
@@ -777,39 +959,28 @@
 
         const mistakesContainer = document.getElementById('mistakes-container');
         const mistakesList = document.getElementById('mistakes-list');
+        const btnReviewMistakes = document.getElementById('btn-review-mistakes');
         
-        if (mistakes.length > 0) {
+        if (mistakesTextList.length > 0) {
             mistakesContainer.classList.remove('hidden');
-            mistakesList.innerHTML = mistakes.map(m => `<li>${m}</li>`).join('');
+            mistakesList.innerHTML = mistakesTextList.map(m => `<li>${m}</li>`).join('');
+            btnReviewMistakes.style.display = 'block';
         } else {
             mistakesContainer.classList.add('hidden');
+            btnReviewMistakes.style.display = 'none';
         }
     }
 
-    // Блок 1
-    document.getElementById('btn-b1-std').addEventListener('click', () => startTest(quizData1, 'standard'));
-    document.getElementById('btn-b1-rev').addEventListener('click', () => startTest(quizData1, 'reverse'));
-    document.getElementById('btn-b1-write').addEventListener('click', () => startTest(quizData1, 'typing'));
+    // Обработчик "Отработать ошибки"
+    document.getElementById('btn-review-mistakes').addEventListener('click', () => {
+        // Запускаем тест только по массиву mistakesDataObj
+        startTest(mistakesDataObj, currentTestMode);
+    });
 
-    // Блок 2
-    document.getElementById('btn-b2-std').addEventListener('click', () => startTest(quizData2, 'standard'));
-    document.getElementById('btn-b2-rev').addEventListener('click', () => startTest(quizData2, 'reverse'));
-    document.getElementById('btn-b2-write').addEventListener('click', () => startTest(quizData2, 'typing'));
-    
-    // Блок 3
-    document.getElementById('btn-b3-std').addEventListener('click', () => startTest(quizData3, 'standard'));
-    document.getElementById('btn-b3-rev').addEventListener('click', () => startTest(quizData3, 'reverse'));
-    document.getElementById('btn-b3-write').addEventListener('click', () => startTest(quizData3, 'typing'));
-
-    // Блок 4
-    document.getElementById('btn-b4-std').addEventListener('click', () => startTest(quizData4, 'standard'));
-    document.getElementById('btn-b4-rev').addEventListener('click', () => startTest(quizData4, 'reverse'));
-    document.getElementById('btn-b4-write').addEventListener('click', () => startTest(quizData4, 'typing'));
-    
-    // Навигация
     document.getElementById('back-menu-btn').addEventListener('click', showMenu);
     document.getElementById('back-from-quiz-btn').addEventListener('click', showMenu);
     
+    // Кнопка рестарта запускает тот же пул (даже если это были ошибки, он перезапустит их)
     document.getElementById('restart-btn').addEventListener('click', () => startTest(activeDataPool, currentTestMode));
 
 </script>
