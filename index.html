@@ -7,7 +7,6 @@
     <style>
         :root {
             --primary: #6366f1; /* Индиго */
-            --primary-hover: #4f46e5;
             --secondary: #8b5cf6; /* Фиолетовый для карточек */
             --success: #10b981;
             --danger: #f43f5e;
@@ -65,11 +64,6 @@
             border-radius: 20px;
             padding: 20px;
             margin-bottom: 20px;
-            transition: border-color 0.3s ease;
-        }
-        
-        .block-container:hover {
-            border-color: #c7d2fe;
         }
 
         .block-title {
@@ -95,7 +89,6 @@
             border-radius: 14px;
             background-color: var(--card-bg);
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             color: var(--text-main);
             font-weight: 600;
             display: flex;
@@ -109,25 +102,6 @@
             border-color: #ddd6fe;
             color: var(--secondary);
             margin-bottom: 5px;
-        }
-
-        .btn-flash:hover:not(:disabled) {
-            background-color: var(--secondary);
-            border-color: var(--secondary);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
-        }
-
-        button:hover:not(:disabled):not(.btn-flash) {
-            border-color: var(--primary);
-            color: var(--primary);
-            background-color: #f8fafc;
-            transform: translateY(-2px);
-        }
-
-        button:active:not(:disabled) {
-            transform: translateY(0);
         }
 
         button.correct {
@@ -173,7 +147,7 @@
             font-weight: 600;
         }
 
-        /* Режим карточек (Flashcards) */
+        /* Режим карточек (Flashcards) - Анимация переворота сохранена */
         .flashcard-container {
             perspective: 1000px;
             margin-bottom: 25px;
@@ -246,15 +220,9 @@
             border-radius: 14px;
             box-sizing: border-box;
             text-align: center;
-            transition: all 0.2s ease;
             outline: none;
             color: var(--text-main);
             font-weight: 600;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
         input[type="text"].correct-input {
@@ -333,22 +301,12 @@
             color: white;
             border: none;
         }
-        .btn-primary:hover:not(:disabled) {
-            background-color: var(--primary-hover);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
 
         .btn-review {
             background-color: #fbbf24;
             color: #78350f;
             border: none;
             font-weight: bold;
-        }
-        .btn-review:hover {
-            background-color: #f59e0b;
-            color: white;
         }
         
         .back-top-btn {
@@ -364,18 +322,11 @@
             font-weight: 700;
             display: inline-block;
         }
-        .back-top-btn:hover:not(:disabled) {
-            color: var(--primary);
-            background: none;
-            border: none;
-            transform: none;
-        }
         
         /* Стилизация скроллбара */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body>
@@ -484,7 +435,7 @@
         </div>
 
         <button id="restart-btn" class="btn-primary" style="width: 100%; margin-bottom: 10px;">Повторить этот тест заново</button>
-        <button id="back-menu-btn" style="width: 100%; justify-content: center;">В главное меню</button>
+        <button id="back-menu-btn" class="btn-primary" style="width: 100%; justify-content: center; background-color: var(--card-bg); color: var(--text-main); border: 2px solid var(--border-color);">В главное меню</button>
     </div>
 </div>
 
@@ -698,7 +649,6 @@
         { word: "conception (n)", answer: "замысел; понимание" },
         { word: "conceptual (adj)", answer: "концептуальный" },
         { word: "conclude (v)", answer: "заключать; завершать" },
-        { word: "concluding (adj)", array: "заключительный" }, // Опечатка исправлена ниже в логике, но лучше тут:
         { word: "concluding (adj)", answer: "заключительный" },
         { word: "conclusion (n)", answer: "вывод; заключение" },
         { word: "conclusive (adj)", answer: "убедительный; окончательный" },
@@ -720,7 +670,7 @@
     let correctCount = 0;
     let incorrectCount = 0;
     let mistakesTextList = [];
-    let mistakesDataObj = []; // Умная работа над ошибками: храним сами объекты
+    let mistakesDataObj = []; 
     let timeoutId = null;
     let currentTestMode = 'standard'; 
 
@@ -765,7 +715,6 @@
         
         while(optionsSet.size < 4) {
             let randomWord = dataPool[Math.floor(Math.random() * dataPool.length)];
-            // Fix: handle missing answers gracefully
             if(randomWord[targetProp]) optionsSet.add(randomWord[targetProp]);
         }
         return Array.from(optionsSet);
@@ -803,7 +752,6 @@
 
     function loadFlashcard() {
         if (currentWordIndex >= shuffledQuizData.length) {
-            // Карточки закончились, возвращаем в меню (оценок тут нет)
             showMenu();
             return;
         }
@@ -868,11 +816,9 @@
             const isReverse = currentTestMode === 'reverse';
             wordDisplay.textContent = isReverse ? currentData.answer : currentData.word;
             
-            // Если включили отработку ошибок, dataPool должен быть оригинальным словарем для генерации вариантов
             let poolForOptions = activeDataPool.length >= 4 ? activeDataPool : window['quizData' + (activeDataPool === mistakesDataObj ? "1" : "1")]; 
-            // fallback to original pool logic (just use current pool, if < 4 it loops, so need safe fallback)
             if(activeDataPool.length < 4) {
-               poolForOptions = [...activeDataPool, ...quizData1].slice(0, 4); // safely pad it
+               poolForOptions = [...activeDataPool, ...quizData1].slice(0, 4);
             }
 
             const rawOptions = getOptionsForWord(currentData, poolForOptions, isReverse);
@@ -971,16 +917,13 @@
         }
     }
 
-    // Обработчик "Отработать ошибки"
     document.getElementById('btn-review-mistakes').addEventListener('click', () => {
-        // Запускаем тест только по массиву mistakesDataObj
         startTest(mistakesDataObj, currentTestMode);
     });
 
     document.getElementById('back-menu-btn').addEventListener('click', showMenu);
     document.getElementById('back-from-quiz-btn').addEventListener('click', showMenu);
     
-    // Кнопка рестарта запускает тот же пул (даже если это были ошибки, он перезапустит их)
     document.getElementById('restart-btn').addEventListener('click', () => startTest(activeDataPool, currentTestMode));
 
 </script>
