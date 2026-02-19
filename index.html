@@ -95,6 +95,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            outline: none;
         }
 
         .btn-flash {
@@ -321,6 +322,7 @@
             width: 100%;
             font-weight: 700;
             display: inline-block;
+            outline: none;
         }
         
         /* Стилизация скроллбара */
@@ -366,12 +368,22 @@
         </div>
 
         <div class="block-container">
-            <div class="block-title">Блок 4 (Новые 60 слов)</div>
+            <div class="block-title">Блок 4 (60 слов)</div>
             <div class="options">
                 <button class="btn-flash" onclick="startFlashcards(quizData4)">🃏 Карточки (Изучение)</button>
                 <button onclick="startTest(quizData4, 'standard')">🎯 Англ ➔ Рус</button>
                 <button onclick="startTest(quizData4, 'reverse')">🔄 Рус ➔ Англ</button>
                 <button onclick="startTest(quizData4, 'typing')">✍️ Письмо</button>
+            </div>
+        </div>
+
+        <div class="block-container">
+            <div class="block-title">Блок 5 (Новые 59 слов)</div>
+            <div class="options">
+                <button class="btn-flash" onclick="startFlashcards(quizData5)">🃏 Карточки (Изучение)</button>
+                <button onclick="startTest(quizData5, 'standard')">🎯 Англ ➔ Рус</button>
+                <button onclick="startTest(quizData5, 'reverse')">🔄 Рус ➔ Англ</button>
+                <button onclick="startTest(quizData5, 'typing')">✍️ Письмо</button>
             </div>
         </div>
     </div>
@@ -662,6 +674,69 @@
         { word: "confirm (v)", answer: "подтверждать" },
         { word: "confirmation (n)", answer: "подтверждение" },
         { word: "conflict (n)", answer: "конфликт; столкновение" }
+    ];
+
+    // --- ДАННЫЕ ДЛЯ БЛОКА 5 ---
+    const quizData5 = [
+        { word: "conflict (v)", answer: "противоречить; вступать в конфликт" },
+        { word: "conform (v)", answer: "соответствовать; подчиняться" },
+        { word: "conformation (n)", answer: "форма; структура; строение" },
+        { word: "conformist (adj)", answer: "конформистский" },
+        { word: "conformity (n)", answer: "соответствие; конформизм" },
+        { word: "consensus (n)", answer: "консенсус; общее согласие" },
+        { word: "consent (n)", answer: "согласие; разрешение" },
+        { word: "consent (v)", answer: "соглашаться; давать согласие" },
+        { word: "consequence (n)", answer: "последствие; результат" },
+        { word: "consequent (adj)", answer: "последующий; вытекающий" },
+        { word: "consequently (adv)", answer: "следовательно; в результате" },
+        { word: "considerable (adj)", answer: "значительный; существенный" },
+        { word: "considerably (adv)", answer: "значительно; существенно" },
+        { word: "consist (v)", answer: "состоять (из); заключаться (в)" },
+        { word: "consistency (n)", answer: "последовательность; согласованность; плотность" },
+        { word: "consistent (adj)", answer: "последовательный; согласованный" },
+        { word: "constancy (n)", answer: "постоянство; неизменность" },
+        { word: "constant (adj)", answer: "постоянный; неизменный" },
+        { word: "constant (n)", answer: "постоянная величина; константа" },
+        { word: "constantly (adv)", answer: "постоянно; непрерывно" },
+        { word: "constituency (n)", answer: "избирательный округ; электорат" },
+        { word: "constituent (n)", answer: "составная часть; компонент" },
+        { word: "constituent (adj)", answer: "составляющий; образующий" },
+        { word: "constitute (v)", answer: "составлять; образовывать; учреждать" },
+        { word: "constitution (n)", answer: "конституция; устройство; структура" },
+        { word: "constitutional (adj)", answer: "конституционный" },
+        { word: "constrain (v)", answer: "сдерживать; ограничивать; принуждать" },
+        { word: "constrained (adj)", answer: "сдержанный; вынужденный; ограниченный" },
+        { word: "constraint (n)", answer: "ограничение; принуждение" },
+        { word: "construct (v)", answer: "строить; сооружать; конструировать" },
+        { word: "construct (n)", answer: "конструкция; концепт; теоретическое построение" },
+        { word: "construction (n)", answer: "строительство; конструкция; построение" },
+        { word: "constructive (adj)", answer: "конструктивный; созидательный" },
+        { word: "consult (v)", answer: "консультироваться; советоваться; обращаться за советом" },
+        { word: "consultancy (n)", answer: "консультирование; консалтинговые услуги" },
+        { word: "consultant (n)", answer: "консультант; советник" },
+        { word: "consultation (n)", answer: "консультация; совещание" },
+        { word: "consultative (adj)", answer: "консультативный" },
+        { word: "consume (v)", answer: "потреблять; расходовать; поглощать" },
+        { word: "consumer (n)", answer: "потребитель" },
+        { word: "consumption (n)", answer: "потребление; расход" },
+        { word: "contact (n)", answer: "контакт; связь" },
+        { word: "contact (v)", answer: "связываться; контактировать" },
+        { word: "contact (adj)", answer: "контактный (например, контактная информация)" },
+        { word: "contemporary (adj)", answer: "современный; относящийся к тому же времени" },
+        { word: "contemporary (n)", answer: "современник" },
+        { word: "context (n)", answer: "контекст; обстоятельства" },
+        { word: "contextual (adj)", answer: "контекстуальный; обусловленный контекстом" },
+        { word: "contextualize (v)", answer: "рассматривать в контексте; помещать в контекст" },
+        { word: "contract (n)", answer: "контракт; договор" },
+        { word: "contract (v)", answer: "заключать договор; сокращать; сжиматься" },
+        { word: "contractor (n)", answer: "подрядчик" },
+        { word: "contradict (v)", answer: "противоречить; опровергать" },
+        { word: "contradiction (n)", answer: "противоречие" },
+        { word: "contradictory (adj)", answer: "противоречивый" },
+        { word: "contrary (n)", answer: "противоположность" },
+        { word: "contrary (adj)", answer: "противоположный" },
+        { word: "contrast (n)", answer: "контраст; различие" },
+        { word: "contrast (v)", answer: "противопоставлять; резко отличаться" }
     ];
 
     let activeDataPool = [];
