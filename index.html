@@ -148,7 +148,7 @@
             font-weight: 600;
         }
 
-        /* Режим карточек (Flashcards) - Анимация переворота сохранена */
+        /* Режим карточек (Flashcards) */
         .flashcard-container {
             perspective: 1000px;
             margin-bottom: 25px;
@@ -378,12 +378,22 @@
         </div>
 
         <div class="block-container">
-            <div class="block-title">Блок 5 (Новые 59 слов)</div>
+            <div class="block-title">Блок 5 (59 слов)</div>
             <div class="options">
                 <button class="btn-flash" onclick="startFlashcards(quizData5)">🃏 Карточки (Изучение)</button>
                 <button onclick="startTest(quizData5, 'standard')">🎯 Англ ➔ Рус</button>
                 <button onclick="startTest(quizData5, 'reverse')">🔄 Рус ➔ Англ</button>
                 <button onclick="startTest(quizData5, 'typing')">✍️ Письмо</button>
+            </div>
+        </div>
+
+        <div class="block-container">
+            <div class="block-title">Блок 6 (Новые 59 слов)</div>
+            <div class="options">
+                <button class="btn-flash" onclick="startFlashcards(quizData6)">🃏 Карточки (Изучение)</button>
+                <button onclick="startTest(quizData6, 'standard')">🎯 Англ ➔ Рус</button>
+                <button onclick="startTest(quizData6, 'reverse')">🔄 Рус ➔ Англ</button>
+                <button onclick="startTest(quizData6, 'typing')">✍️ Письмо</button>
             </div>
         </div>
     </div>
@@ -739,6 +749,69 @@
         { word: "contrast (v)", answer: "противопоставлять; резко отличаться" }
     ];
 
+    // --- ДАННЫЕ ДЛЯ БЛОКА 6 ---
+    const quizData6 = [
+        { word: "contribute (v)", answer: "вносить вклад, способствовать" },
+        { word: "contribution (n)", answer: "вклад" },
+        { word: "contributor (n)", answer: "участник, автор, вкладчик" },
+        { word: "controversial (adj)", answer: "спорный, противоречивый" },
+        { word: "controversy (n)", answer: "спор, полемика" },
+        { word: "convene (v)", answer: "созывать, собирать" },
+        { word: "convention (n)", answer: "собрание; соглашение; традиция" },
+        { word: "conventional (adj)", answer: "традиционный, общепринятый" },
+        { word: "converse (adj)", answer: "противоположный, обратный" },
+        { word: "conversely (adv)", answer: "наоборот" },
+        { word: "conversion (n)", answer: "преобразование, превращение" },
+        { word: "convert (v)", answer: "превращать, преобразовывать" },
+        { word: "convertible (adj)", answer: "конвертируемый; трансформируемый" },
+        { word: "convince (v)", answer: "убеждать" },
+        { word: "convinced (adj)", answer: "убеждённый" },
+        { word: "convincing (adj)", answer: "убедительный" },
+        { word: "cooperate (v)", answer: "сотрудничать" },
+        { word: "cooperation (n)", answer: "сотрудничество" },
+        { word: "cooperative (adj)", answer: "кооперативный; сотрудничающий" },
+        { word: "coordinate (v)", answer: "координировать" },
+        { word: "coordinate (n)", answer: "координата" },
+        { word: "coordinate (adj)", answer: "согласованный" },
+        { word: "coordination (n)", answer: "координация" },
+        { word: "coordinator (n)", answer: "координатор" },
+        { word: "core (n)", answer: "ядро, основа" },
+        { word: "core (adj)", answer: "основной, ключевой" },
+        { word: "core (v)", answer: "удалять сердцевину" },
+        { word: "corporate (adj)", answer: "корпоративный" },
+        { word: "corporation (n)", answer: "корпорация" },
+        { word: "correspond (v)", answer: "соответствовать; переписываться" },
+        { word: "correspondence (n)", answer: "соответствие; переписка" },
+        { word: "corresponding (adj)", answer: "соответствующий" },
+        { word: "couple (n)", answer: "пара" },
+        { word: "couple (v)", answer: "соединять, связывать" },
+        { word: "create (v)", answer: "создавать" },
+        { word: "creation (n)", answer: "создание" },
+        { word: "creative (adj)", answer: "творческий" },
+        { word: "creativity (n)", answer: "креативность, творческие способности" },
+        { word: "creator (n)", answer: "создатель" },
+        { word: "credit (n)", answer: "кредит; доверие; заслуга" },
+        { word: "credit (v)", answer: "зачислять; приписывать" },
+        { word: "creditor (n)", answer: "кредитор" },
+        { word: "criterion (n)", answer: "критерий" },
+        { word: "crucial (adj)", answer: "решающий, крайне важный" },
+        { word: "cultural (adj)", answer: "культурный" },
+        { word: "culturally (adv)", answer: "в культурном отношении" },
+        { word: "culture (n)", answer: "культура" },
+        { word: "currency (n)", answer: "валюта" },
+        { word: "cycle (n)", answer: "цикл" },
+        { word: "cycle (v)", answer: "циклически повторяться; ездить на велосипеде" },
+        { word: "cyclic (adj)", answer: "циклический" },
+        { word: "data (n)", answer: "данные" },
+        { word: "debatable (adj)", answer: "спорный" },
+        { word: "debate (n)", answer: "дебаты, обсуждение" },
+        { word: "debate (v)", answer: "обсуждать, дискутировать" },
+        { word: "decade (n)", answer: "десятилетие" },
+        { word: "decline (n)", answer: "спад, снижение" },
+        { word: "decline (v)", answer: "снижаться; отказываться" },
+        { word: "deduce (v)", answer: "выводить, делать вывод" }
+    ];
+
     let activeDataPool = [];
     let shuffledQuizData = [];
     let currentWordIndex = 0;
@@ -892,7 +965,7 @@
             wordDisplay.textContent = isReverse ? currentData.answer : currentData.word;
             
             let poolForOptions = activeDataPool.length >= 4 ? activeDataPool : window['quizData' + (activeDataPool === mistakesDataObj ? "1" : "1")]; 
-            if(activeDataPool.length < 4) {
+            if(!poolForOptions || poolForOptions.length < 4) {
                poolForOptions = [...activeDataPool, ...quizData1].slice(0, 4);
             }
 
